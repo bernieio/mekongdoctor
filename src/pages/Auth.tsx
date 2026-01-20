@@ -1,14 +1,40 @@
-import { SignIn, SignUp } from "@clerk/clerk-react";
-import { useState } from "react";
+import { SignIn, SignUp, useAuth } from "@clerk/clerk-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Droplets } from "lucide-react";
 
 export default function Auth() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const { t } = useLanguage();
+  const { isSignedIn, isLoaded } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect if already signed in
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      navigate("/");
+    }
+  }, [isLoaded, isSignedIn, navigate]);
+
+  // Show loading while Clerk is initializing
+  if (!isLoaded) {
+    return (
+      <Layout>
+        <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Don't render auth form if already signed in
+  if (isSignedIn) {
+    return null;
+  }
 
   return (
     <Layout>
@@ -37,7 +63,6 @@ export default function Auth() {
               {mode === "signin" ? (
                 <SignIn 
                   routing="hash"
-                  signUpUrl="/auth"
                   afterSignInUrl="/"
                   appearance={{
                     elements: {
@@ -58,7 +83,6 @@ export default function Auth() {
               ) : (
                 <SignUp 
                   routing="hash"
-                  signInUrl="/auth"
                   afterSignUpUrl="/"
                   appearance={{
                     elements: {
