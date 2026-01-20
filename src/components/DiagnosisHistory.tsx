@@ -161,25 +161,28 @@ export function DiagnosisHistory({ clerkUserId }: DiagnosisHistoryProps) {
               value={diagnosis.id}
               className="border-2 border-border px-4"
             >
-              <AccordionTrigger className="hover:no-underline">
-                <div className="flex flex-col items-start gap-2 text-left w-full pr-4">
+              <AccordionTrigger className="hover:no-underline py-3">
+                <div className="flex flex-col items-start gap-1.5 sm:gap-2 text-left w-full pr-4">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold">{diagnosis.crop_type}</span>
+                    <span className="font-semibold text-sm sm:text-base">{diagnosis.crop_type}</span>
                     {getStatusBadge(diagnosis.diagnosis_status)}
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+                  <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground flex-wrap">
                     <span className="flex items-center gap-1">
                       <Droplets className="h-3 w-3" />
                       {diagnosis.salinity_level}‰
                     </span>
                     <span className="flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
-                      {diagnosis.district ? `${diagnosis.district}, ` : ""}
-                      {diagnosis.province}
+                      <span className="truncate max-w-[120px] sm:max-w-none">
+                        {diagnosis.district ? `${diagnosis.district}, ` : ""}
+                        {diagnosis.province}
+                      </span>
                     </span>
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      {formatDate(diagnosis.created_at)}
+                      <span className="hidden sm:inline">{formatDate(diagnosis.created_at)}</span>
+                      <span className="sm:hidden">{new Date(diagnosis.created_at).toLocaleDateString("vi-VN")}</span>
                     </span>
                   </div>
                 </div>
@@ -226,7 +229,7 @@ export function DiagnosisHistory({ clerkUserId }: DiagnosisHistoryProps) {
                   {diagnosis.image_urls && diagnosis.image_urls.length > 0 && (
                     <div>
                       <h4 className="font-semibold text-sm mb-2">Hình ảnh:</h4>
-                      <div className="flex gap-2 flex-wrap">
+                      <div className="flex gap-2 flex-wrap overflow-x-auto pb-2">
                         {diagnosis.image_urls.map((url, idx) => (
                           <img
                             key={idx}

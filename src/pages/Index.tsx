@@ -28,7 +28,7 @@ export default function Index() {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center">
+      <section className="relative min-h-[60vh] md:min-h-[70vh] flex items-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
@@ -36,7 +36,7 @@ export default function Index() {
           <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
         </div>
         
-        <div className="container relative z-10 py-20">
+        <div className="container relative z-10 py-12 md:py-20">
           <div className="max-w-2xl space-y-6">
             <Badge className="bg-secondary text-secondary-foreground border-2 border-foreground px-4 py-1">
               {t("hero.badge")}
