@@ -1,28 +1,183 @@
 import { useState } from "react";
+import { useUser } from "@clerk/clerk-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { GraduationCap, Wallet, Handshake, Heart, Users, CheckCircle, Send } from "lucide-react";
+import { GraduationCap, Wallet, Handshake, Heart, Users, CheckCircle, Send, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
+
+interface ScholarshipForm {
+  fullName: string;
+  email: string;
+  phone: string;
+}
+
+interface LoanForm {
+  fullName: string;
+  phone: string;
+}
+
+interface VentureForm {
+  businessName: string;
+  phone: string;
+}
 
 export default function Community() {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { user, isSignedIn } = useUser();
   const [activeTab, setActiveTab] = useState("scholarship");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Form states
+  const [scholarshipForm, setScholarshipForm] = useState<ScholarshipForm>({
+    fullName: "",
+    email: "",
+    phone: "",
+  });
+  const [loanForm, setLoanForm] = useState<LoanForm>({
+    fullName: "",
+    phone: "",
+  });
+  const [ventureForm, setVentureForm] = useState<VentureForm>({
+    businessName: "",
+    phone: "",
+  });
+
+  const resetForms = () => {
+    setScholarshipForm({ fullName: "", email: "", phone: "" });
+    setLoanForm({ fullName: "", phone: "" });
+    setVentureForm({ businessName: "", phone: "" });
+  };
+
+  const handleScholarshipSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: t("community.form.success"),
-      description: t("community.form.success.description"),
-    });
+    if (!isSignedIn || !user) {
+      toast({
+        title: "Vui lòng đăng nhập",
+        description: "Bạn cần đăng nhập để gửi đơn đăng ký.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("save-community-application", {
+        body: {
+          clerkUserId: user.id,
+          applicationType: "scholarship",
+          fullName: scholarshipForm.fullName,
+          email: scholarshipForm.email,
+          phone: scholarshipForm.phone,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: t("community.form.success"),
+        description: t("community.form.success.description"),
+      });
+      resetForms();
+    } catch (error) {
+      console.error("Error submitting scholarship:", error);
+      toast({
+        title: "Có lỗi xảy ra",
+        description: "Không thể gửi đơn đăng ký. Vui lòng thử lại.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLoanSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isSignedIn || !user) {
+      toast({
+        title: "Vui lòng đăng nhập",
+        description: "Bạn cần đăng nhập để gửi đơn đăng ký.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("save-community-application", {
+        body: {
+          clerkUserId: user.id,
+          applicationType: "loan",
+          fullName: loanForm.fullName,
+          phone: loanForm.phone,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: t("community.form.success"),
+        description: t("community.form.success.description"),
+      });
+      resetForms();
+    } catch (error) {
+      console.error("Error submitting loan:", error);
+      toast({
+        title: "Có lỗi xảy ra",
+        description: "Không thể gửi đơn đăng ký. Vui lòng thử lại.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleVentureSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isSignedIn || !user) {
+      toast({
+        title: "Vui lòng đăng nhập",
+        description: "Bạn cần đăng nhập để gửi đơn đăng ký.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("save-community-application", {
+        body: {
+          clerkUserId: user.id,
+          applicationType: "venture",
+          businessName: ventureForm.businessName,
+          phone: ventureForm.phone,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: t("community.form.success"),
+        description: t("community.form.success.description"),
+      });
+      resetForms();
+    } catch (error) {
+      console.error("Error submitting venture:", error);
+      toast({
+        title: "Có lỗi xảy ra",
+        description: "Không thể gửi đơn đăng ký. Vui lòng thử lại.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -122,22 +277,51 @@ export default function Community() {
                     <CardTitle>Đăng ký / Apply</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleScholarshipSubmit} className="space-y-4">
                       <div className="space-y-2">
                         <Label>Họ và tên / Full Name</Label>
-                        <Input className="border-2" placeholder="Nguyễn Văn A" required />
+                        <Input
+                          className="border-2"
+                          placeholder="Nguyễn Văn A"
+                          required
+                          value={scholarshipForm.fullName}
+                          onChange={(e) => setScholarshipForm({ ...scholarshipForm, fullName: e.target.value })}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label>Email</Label>
-                        <Input className="border-2" type="email" placeholder="email@example.com" required />
+                        <Input
+                          className="border-2"
+                          type="email"
+                          placeholder="email@example.com"
+                          required
+                          value={scholarshipForm.email}
+                          onChange={(e) => setScholarshipForm({ ...scholarshipForm, email: e.target.value })}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label>Số điện thoại / Phone</Label>
-                        <Input className="border-2" type="tel" placeholder="0912345678" required />
+                        <Input
+                          className="border-2"
+                          type="tel"
+                          placeholder="0912345678"
+                          required
+                          value={scholarshipForm.phone}
+                          onChange={(e) => setScholarshipForm({ ...scholarshipForm, phone: e.target.value })}
+                        />
                       </div>
-                      <Button type="submit" className="w-full border-2 border-foreground shadow-md">
-                        <Send className="mr-2 h-4 w-4" />
-                        {t("community.form.submit")}
+                      <Button type="submit" className="w-full border-2 border-foreground shadow-md" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Đang gửi...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="mr-2 h-4 w-4" />
+                            {t("community.form.submit")}
+                          </>
+                        )}
                       </Button>
                     </form>
                   </CardContent>
@@ -163,18 +347,38 @@ export default function Community() {
                     <CardTitle>Đăng ký / Apply</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleLoanSubmit} className="space-y-4">
                       <div className="space-y-2">
                         <Label>Họ và tên / Full Name</Label>
-                        <Input className="border-2" required />
+                        <Input
+                          className="border-2"
+                          required
+                          value={loanForm.fullName}
+                          onChange={(e) => setLoanForm({ ...loanForm, fullName: e.target.value })}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label>Số điện thoại / Phone</Label>
-                        <Input className="border-2" type="tel" required />
+                        <Input
+                          className="border-2"
+                          type="tel"
+                          required
+                          value={loanForm.phone}
+                          onChange={(e) => setLoanForm({ ...loanForm, phone: e.target.value })}
+                        />
                       </div>
-                      <Button type="submit" className="w-full border-2 border-foreground shadow-md">
-                        <Send className="mr-2 h-4 w-4" />
-                        {t("community.form.register")}
+                      <Button type="submit" className="w-full border-2 border-foreground shadow-md" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Đang gửi...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="mr-2 h-4 w-4" />
+                            {t("community.form.register")}
+                          </>
+                        )}
                       </Button>
                     </form>
                   </CardContent>
@@ -200,18 +404,38 @@ export default function Community() {
                     <CardTitle>Đăng ký / Apply</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleVentureSubmit} className="space-y-4">
                       <div className="space-y-2">
                         <Label>Tên cá nhân/doanh nghiệp</Label>
-                        <Input className="border-2" required />
+                        <Input
+                          className="border-2"
+                          required
+                          value={ventureForm.businessName}
+                          onChange={(e) => setVentureForm({ ...ventureForm, businessName: e.target.value })}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label>Số điện thoại / Phone</Label>
-                        <Input className="border-2" type="tel" required />
+                        <Input
+                          className="border-2"
+                          type="tel"
+                          required
+                          value={ventureForm.phone}
+                          onChange={(e) => setVentureForm({ ...ventureForm, phone: e.target.value })}
+                        />
                       </div>
-                      <Button type="submit" className="w-full border-2 border-foreground shadow-md">
-                        <Send className="mr-2 h-4 w-4" />
-                        {t("community.form.register")}
+                      <Button type="submit" className="w-full border-2 border-foreground shadow-md" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Đang gửi...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="mr-2 h-4 w-4" />
+                            {t("community.form.register")}
+                          </>
+                        )}
                       </Button>
                     </form>
                   </CardContent>

@@ -23,3 +23,9 @@ verify_jwt = false
 
 [functions.save-diagnosis]
 verify_jwt = false
+
+[functions.save-community-application]
+verify_jwt = false
+
+[functions.get-diagnoses]
+verify_jwt = false
