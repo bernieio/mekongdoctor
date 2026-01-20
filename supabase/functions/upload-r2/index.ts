@@ -66,16 +66,32 @@ serve(async (req) => {
 
     const formData = await req.formData();
     const file = formData.get("file") as File;
-    const userId = formData.get("userId") as string;
+    const rawUserId = formData.get("userId") as string;
 
     if (!file) {
       throw new Error("No file provided");
     }
 
+    // Sanitize userId to prevent path traversal attacks
+    // Remove any path traversal sequences like ../, ..\, or encoded variants
+    const sanitizeUserId = (id: string | null): string => {
+      if (!id) return "anonymous";
+      // Remove path separators and parent directory references
+      return id
+        .replace(/\.\./g, "")
+        .replace(/[\/\\]/g, "")
+        .replace(/%2e%2e/gi, "")
+        .replace(/%2f/gi, "")
+        .replace(/%5c/gi, "")
+        .trim() || "anonymous";
+    };
+
+    const userId = sanitizeUserId(rawUserId);
+
     // Generate unique filename
     const timestamp = Date.now();
-    const ext = file.name.split('.').pop() || 'jpg';
-    const fileName = `diagnoses/${userId || 'anonymous'}/${timestamp}.${ext}`;
+    const ext = file.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'jpg';
+    const fileName = `diagnoses/${userId}/${timestamp}.${ext}`;
 
     // Read file content
     const arrayBuffer = await file.arrayBuffer();
