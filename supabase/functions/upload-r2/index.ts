@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -50,6 +51,11 @@ async function getSignatureKey(
   return kSigning;
 }
 
+// Maximum file size: 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+// Allowed file types
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -57,8 +63,38 @@ serve(async (req) => {
   }
 
   try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+    // Verify authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      console.error("Missing or invalid authorization header");
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Verify JWT and get user
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: authError } = await supabaseAuth.auth.getUser(token);
+
+    if (authError || !userData?.user) {
+      console.error("Failed to verify user:", authError);
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const R2_ACCESS_KEY_ID = Deno.env.get("R2_ACCESS_KEY_ID");
     const R2_SECRET_ACCESS_KEY = Deno.env.get("R2_SECRET_ACCESS_KEY");
+    const R2_ACCOUNT_ID = Deno.env.get("R2_ACCOUNT_ID");
 
     if (!R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
       throw new Error("R2 credentials are not configured");
@@ -66,29 +102,33 @@ serve(async (req) => {
 
     const formData = await req.formData();
     const file = formData.get("file") as File;
-    const rawUserId = formData.get("userId") as string;
 
     if (!file) {
       throw new Error("No file provided");
     }
 
-    // Sanitize userId to prevent path traversal attacks
-    // Remove any path traversal sequences like ../, ..\, or encoded variants
-    const sanitizeUserId = (id: string | null): string => {
-      if (!id) return "anonymous";
-      // Remove path separators and parent directory references
-      return id
-        .replace(/\.\./g, "")
-        .replace(/[\/\\]/g, "")
-        .replace(/%2e%2e/gi, "")
-        .replace(/%2f/gi, "")
-        .replace(/%5c/gi, "")
-        .trim() || "anonymous";
-    };
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      return new Response(
+        JSON.stringify({ success: false, error: "File size exceeds 10MB limit" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    const userId = sanitizeUserId(rawUserId);
+    // Validate file type
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    // Generate unique filename
+    // Use authenticated user's ID from JWT, ignore any userId from form data
+    const userId = userData.user.id;
+
+    console.log("File upload for authenticated user:", userId);
+
+    // Generate unique filename using authenticated user ID
     const timestamp = Date.now();
     const ext = file.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'jpg';
     const fileName = `diagnoses/${userId}/${timestamp}.${ext}`;
@@ -97,8 +137,8 @@ serve(async (req) => {
     const arrayBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
 
-    // R2 Configuration
-    const accountId = "78dc9560b9d91850f37bfa8fe00b3601";
+    // R2 Configuration - use env variable or fallback
+    const accountId = R2_ACCOUNT_ID || "78dc9560b9d91850f37bfa8fe00b3601";
     const bucketName = "mekong-doctor";
     const endpoint = `https://${accountId}.r2.cloudflarestorage.com`;
     const region = "auto";
