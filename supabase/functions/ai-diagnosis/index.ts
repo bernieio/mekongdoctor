@@ -1,21 +1,24 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface DiagnosisRequest {
-  province: string;
-  district?: string;
-  cropType: string;
-  cropLabel: string;
-  salinityLevel: number;
-  threshold: number;
-  symptoms?: string;
-  imageUrls?: string[];
-  language: string;
-}
+// Input validation schema with limits to prevent resource exhaustion
+const DiagnosisRequestSchema = z.object({
+  province: z.string().min(1).max(100),
+  district: z.string().max(100).optional(),
+  cropType: z.string().min(1).max(50),
+  cropLabel: z.string().min(1).max(100),
+  salinityLevel: z.number().min(0).max(100),
+  threshold: z.number().min(0).max(100),
+  symptoms: z.string().max(2000).optional(),
+  imageUrls: z.array(z.string().url().max(500)).max(10).optional(),
+  language: z.enum(["vi", "en", "ko"]),
+});
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -24,13 +27,60 @@ serve(async (req) => {
   }
 
   try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+    // Verify authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      console.error("Missing or invalid authorization header");
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Verify JWT and get user
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: authError } = await supabaseAuth.auth.getUser(token);
+
+    if (authError || !userData?.user) {
+      console.error("Failed to verify user:", authError);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
     if (!OPENROUTER_API_KEY) {
       throw new Error("OPENROUTER_API_KEY is not configured");
     }
 
-    const body: DiagnosisRequest = await req.json();
-    const { province, district, cropType, cropLabel, salinityLevel, threshold, symptoms, imageUrls, language } = body;
+    // Parse and validate input
+    const body = await req.json();
+    const parseResult = DiagnosisRequestSchema.safeParse(body);
+    
+    if (!parseResult.success) {
+      return new Response(
+        JSON.stringify({ error: "Invalid input", details: parseResult.error.errors }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const validatedBody = parseResult.data;
+    const { province, district, cropType, cropLabel, salinityLevel, threshold, symptoms, imageUrls, language } = validatedBody;
+
+    // Sanitize symptoms to prevent prompt injection - remove control characters
+    const sanitizedSymptoms = symptoms 
+      ? symptoms.replace(/[\x00-\x1F\x7F]/g, "").slice(0, 2000) 
+      : undefined;
+
+    console.log("AI diagnosis request for user:", userData.user.id);
 
     // Build the prompt for AI
     const systemPrompt = `Bạn là "Mekong Doctor" - chuyên gia tư vấn nông nghiệp về xâm nhập mặn tại Đồng bằng sông Cửu Long, Việt Nam. 
@@ -60,7 +110,7 @@ Ngôn ngữ trả lời: ${language === 'vi' ? 'Tiếng Việt' : language === '
 - Loại cây trồng: ${cropLabel} (${cropType})
 - Ngưỡng chịu mặn: ${threshold}g/L
 - Độ mặn đo được: ${salinityLevel}g/L
-- Triệu chứng: ${symptoms || 'Không có mô tả cụ thể'}
+- Triệu chứng: ${sanitizedSymptoms || 'Không có mô tả cụ thể'}
 ${imageUrls && imageUrls.length > 0 ? `- Có ${imageUrls.length} ảnh đính kèm` : ''}
 
 Hãy phân tích và đưa ra chẩn đoán chi tiết.`;

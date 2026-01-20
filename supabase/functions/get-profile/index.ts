@@ -1,9 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Input validation schema
+const GetProfileSchema = z.object({
+  clerkUserId: z.string().min(1).max(100).optional(),
+});
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
@@ -12,21 +18,63 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { clerkUserId } = await req.json();
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    if (!clerkUserId) {
+    // Verify authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      console.error("Missing or invalid authorization header");
       return new Response(
-        JSON.stringify({ error: "clerk_user_id is required" }),
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Verify JWT and get user
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: authError } = await supabaseAuth.auth.getUser(token);
+
+    if (authError || !userData?.user) {
+      console.error("Failed to verify user:", authError);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Parse and validate input
+    const body = await req.json();
+    const parseResult = GetProfileSchema.safeParse(body);
+    
+    if (!parseResult.success) {
+      return new Response(
+        JSON.stringify({ error: "Invalid input", details: parseResult.error.errors }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+    // Use the authenticated user's ID from JWT, not from request body
+    const clerkUserId = userData.user.id;
+
+    // If a different clerkUserId was provided in the body, deny access
+    if (parseResult.data.clerkUserId && parseResult.data.clerkUserId !== clerkUserId) {
+      console.error("Attempted to access another user's profile");
+      return new Response(
+        JSON.stringify({ error: "Forbidden - cannot access other users data" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Initialize Supabase client with service role to bypass RLS
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Fetch profile
+    // Fetch profile for the authenticated user only
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("*")
@@ -57,6 +105,8 @@ Deno.serve(async (req) => {
     if (rolesError) {
       console.error("Error fetching roles:", rolesError);
     }
+
+    console.log("Profile fetched successfully for user:", clerkUserId);
 
     return new Response(
       JSON.stringify({ 
