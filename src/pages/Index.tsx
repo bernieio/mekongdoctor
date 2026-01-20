@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Droplets, Bot, Store, Heart, AlertTriangle, TrendingUp, MapPin, ThermometerSun } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SalinityMap } from "@/components/SalinityMap";
 import heroImage from "@/assets/hero-mekong.jpg";
 import farmerImage from "@/assets/farmer-checking.jpg";
 
@@ -85,7 +86,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Salinity Alerts */}
+      {/* Salinity Map & Alerts */}
       <section className="py-12 bg-background">
         <div className="container">
           <div className="flex items-center gap-3 mb-6">
@@ -98,30 +99,36 @@ export default function Index() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {salinityAlerts.map((alert, index) => (
-              <Card key={index} className={`border-2 ${alert.status === 'danger' ? 'border-destructive' : 'border-accent'}`}>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <p className="font-medium text-sm">{alert.location}</p>
-                      <div className="flex items-center gap-2">
-                        <Droplets className="h-4 w-4 text-muted-foreground" />
-                        <span className={`text-2xl font-bold ${alert.status === 'danger' ? 'text-destructive' : 'text-accent'}`}>
-                          {alert.level}g/L
-                        </span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Salinity Map */}
+            <SalinityMap />
+
+            {/* Alert Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {salinityAlerts.map((alert, index) => (
+                <Card key={index} className={`border-2 ${alert.status === 'danger' ? 'border-destructive' : 'border-accent'}`}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <p className="font-medium text-sm">{alert.location}</p>
+                        <div className="flex items-center gap-2">
+                          <Droplets className="h-4 w-4 text-muted-foreground" />
+                          <span className={`text-2xl font-bold ${alert.status === 'danger' ? 'text-destructive' : 'text-accent'}`}>
+                            {alert.level}g/L
+                          </span>
+                        </div>
                       </div>
+                      <Badge 
+                        variant={alert.status === 'danger' ? 'destructive' : 'secondary'}
+                        className="border-2 border-foreground"
+                      >
+                        {alert.status === 'danger' ? t("alerts.danger") : t("alerts.warning")}
+                      </Badge>
                     </div>
-                    <Badge 
-                      variant={alert.status === 'danger' ? 'destructive' : 'secondary'}
-                      className="border-2 border-foreground"
-                    >
-                      {alert.status === 'danger' ? t("alerts.danger") : t("alerts.warning")}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </section>
