@@ -20,10 +20,26 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-bold text-lg">Liên kết nhanh</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="/diagnosis" className="hover:text-sidebar-primary transition-colors">Chẩn đoán AI</a></li>
-              <li><a href="/taccau" className="hover:text-sidebar-primary transition-colors">Khóm Tắc Cậu</a></li>
-              <li><a href="/community" className="hover:text-sidebar-primary transition-colors">Cộng đồng Mekong</a></li>
-              <li><a href="/marketplace" className="hover:text-sidebar-primary transition-colors">Chợ Nông sản</a></li>
+              <li>
+                <a href="/diagnosis" className="hover:text-sidebar-primary transition-colors">
+                  Chẩn đoán AI
+                </a>
+              </li>
+              <li>
+                <a href="/taccau" className="hover:text-sidebar-primary transition-colors">
+                  Khóm Tắc Cậu
+                </a>
+              </li>
+              <li>
+                <a href="/community" className="hover:text-sidebar-primary transition-colors">
+                  Cộng đồng Mekong
+                </a>
+              </li>
+              <li>
+                <a href="/marketplace" className="hover:text-sidebar-primary transition-colors">
+                  Chợ Nông sản
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -57,7 +73,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-sidebar-border text-center text-sm text-sidebar-foreground/60">
-          © 2024 Mekong Doctor. Tất cả quyền được bảo lưu.
+          © 2026 Mekong Doctor. Tất cả quyền được bảo lưu.
         </div>
       </div>
     </footer>
