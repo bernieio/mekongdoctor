@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      diagnoses: {
+        Row: {
+          created_at: string
+          crop_type: string
+          diagnosis_message: string
+          diagnosis_status: string
+          district: string | null
+          id: string
+          image_urls: string[] | null
+          policy_info: string | null
+          province: string
+          salinity_level: number
+          solutions: string[] | null
+          symptoms: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          crop_type: string
+          diagnosis_message: string
+          diagnosis_status: string
+          district?: string | null
+          id?: string
+          image_urls?: string[] | null
+          policy_info?: string | null
+          province: string
+          salinity_level: number
+          solutions?: string[] | null
+          symptoms?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          crop_type?: string
+          diagnosis_message?: string
+          diagnosis_status?: string
+          district?: string | null
+          id?: string
+          image_urls?: string[] | null
+          policy_info?: string | null
+          province?: string
+          salinity_level?: number
+          solutions?: string[] | null
+          symptoms?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnoses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diagnoses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

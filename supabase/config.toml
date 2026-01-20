@@ -14,3 +14,12 @@ verify_jwt = false
 
 [functions.admin-get-users]
 verify_jwt = false
+
+[functions.ai-diagnosis]
+verify_jwt = false
+
+[functions.upload-r2]
+verify_jwt = false
+
+[functions.save-diagnosis]
+verify_jwt = false

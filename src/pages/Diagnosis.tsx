@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Droplets, MapPin, Leaf, Upload, Send, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
+import { Bot, Droplets, MapPin, Leaf, Upload, Send, AlertTriangle, CheckCircle, Loader2, X, Image as ImageIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useUser } from "@clerk/clerk-react";
+import { toast } from "sonner";
 
 const provinces = [
   "An Giang", "Bạc Liêu", "Bến Tre", "Cà Mau", "Cần Thơ",
@@ -35,6 +37,9 @@ interface DiagnosisResult {
 
 export default function Diagnosis() {
   const { t, language } = useLanguage();
+  const { user } = useUser();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const [formData, setFormData] = useState({
     province: "",
     district: "",
@@ -43,7 +48,10 @@ export default function Diagnosis() {
     symptoms: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [result, setResult] = useState<DiagnosisResult | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<{ file: File; preview: string }[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
 
   const getCropLabel = (crop: typeof cropTypes[0]) => {
     if (language === "en") return crop.labelEn;
@@ -51,124 +59,149 @@ export default function Diagnosis() {
     return crop.label;
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const newImages = Array.from(files).map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+
+    setUploadedImages(prev => [...prev, ...newImages].slice(0, 5)); // Max 5 images
+  };
+
+  const removeImage = (index: number) => {
+    setUploadedImages(prev => {
+      const newImages = [...prev];
+      URL.revokeObjectURL(newImages[index].preview);
+      newImages.splice(index, 1);
+      return newImages;
+    });
+  };
+
+  const uploadImages = async (): Promise<string[]> => {
+    if (uploadedImages.length === 0) return [];
+
+    setIsUploading(true);
+    const urls: string[] = [];
+
+    try {
+      for (const { file } of uploadedImages) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("userId", user?.id || "anonymous");
+
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-r2`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+        if (data.success && data.url) {
+          urls.push(data.url);
+        }
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error(language === "vi" ? "Lỗi tải ảnh" : "Image upload failed");
+    } finally {
+      setIsUploading(false);
+    }
+
+    return urls;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate AI diagnosis (will be replaced with actual API call)
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      // Upload images first if any
+      const imageUrls = await uploadImages();
+      setUploadedUrls(imageUrls);
 
-    const salinity = parseFloat(formData.salinityLevel);
-    const crop = cropTypes.find(c => c.value === formData.cropType);
-    
-    let diagnosisResult: DiagnosisResult;
-
-    if (crop) {
-      const cropLabel = getCropLabel(crop);
-      if (salinity <= crop.threshold * 0.5) {
-        diagnosisResult = {
-          status: "safe",
-          message: language === "vi" 
-            ? `Độ mặn ${salinity}g/L nằm trong ngưỡng an toàn cho ${cropLabel}. Cây trồng có thể phát triển bình thường.`
-            : language === "en"
-            ? `Salinity level ${salinity}g/L is within safe threshold for ${cropLabel}. Crops can develop normally.`
-            : `염도 ${salinity}g/L은 ${cropLabel}에 대해 안전한 임계값 내에 있습니다. 작물이 정상적으로 발달할 수 있습니다.`,
-          solutions: language === "vi" ? [
-            "Tiếp tục theo dõi độ mặn định kỳ hàng tuần",
-            "Duy trì chế độ tưới tiêu hiện tại",
-            "Kiểm tra dự báo thời tiết và triều cường"
-          ] : language === "en" ? [
-            "Continue monitoring salinity weekly",
-            "Maintain current irrigation regime",
-            "Check weather and tide forecasts"
-          ] : [
-            "매주 염도 모니터링 계속",
-            "현재 관개 체제 유지",
-            "날씨 및 조수 예보 확인"
-          ]
-        };
-      } else if (salinity <= crop.threshold) {
-        diagnosisResult = {
-          status: "warning",
-          message: language === "vi"
-            ? `Độ mặn ${salinity}g/L đang ở mức cảnh báo cho ${cropLabel}. Cần có biện pháp phòng ngừa.`
-            : language === "en"
-            ? `Salinity level ${salinity}g/L is at warning level for ${cropLabel}. Preventive measures needed.`
-            : `염도 ${salinity}g/L은 ${cropLabel}에 대해 경고 수준입니다. 예방 조치가 필요합니다.`,
-          solutions: language === "vi" ? [
-            "Tăng cường trữ nước ngọt trong ao/mương",
-            "Hạn chế lấy nước vào lúc triều cường",
-            "Bón thêm vôi để cải thiện đất (10-15kg/1000m²)",
-            "Cân nhắc che phủ gốc để giảm bốc hơi"
-          ] : language === "en" ? [
-            "Increase freshwater storage in ponds/canals",
-            "Limit water intake during high tide",
-            "Apply lime to improve soil (10-15kg/1000m²)",
-            "Consider mulching to reduce evaporation"
-          ] : [
-            "연못/운하에 담수 저장량 증가",
-            "만조 시 물 섭취 제한",
-            "토양 개선을 위해 석회 적용 (10-15kg/1000m²)",
-            "증발 감소를 위한 멀칭 고려"
-          ],
-          policy: language === "vi" 
-            ? "Bạn có thể đăng ký hỗ trợ kỹ thuật miễn phí từ Trạm Khuyến nông địa phương."
-            : language === "en"
-            ? "You can register for free technical support from the local Agricultural Extension Station."
-            : "지역 농업지도소에서 무료 기술 지원을 신청할 수 있습니다."
-        };
-      } else {
-        diagnosisResult = {
-          status: "danger",
-          message: language === "vi"
-            ? `CẢNH BÁO: Độ mặn ${salinity}g/L vượt ngưỡng chịu đựng của ${cropLabel} (${crop.threshold}g/L). Cần hành động khẩn cấp!`
-            : language === "en"
-            ? `WARNING: Salinity ${salinity}g/L exceeds tolerance threshold of ${cropLabel} (${crop.threshold}g/L). Urgent action needed!`
-            : `경고: 염도 ${salinity}g/L이 ${cropLabel}의 내성 임계값(${crop.threshold}g/L)을 초과했습니다. 긴급 조치가 필요합니다!`,
-          solutions: language === "vi" ? [
-            "NGỪNG ngay việc lấy nước từ nguồn nhiễm mặn",
-            "Xả nước mặn và thay thế bằng nước ngọt dự trữ",
-            "Bón vôi gấp đôi liều thông thường (20-30kg/1000m²)",
-            "Xem xét chuyển đổi sang giống chịu mặn hoặc nuôi tôm",
-            "Liên hệ ngay cơ quan nông nghiệp địa phương"
-          ] : language === "en" ? [
-            "STOP taking water from saline sources immediately",
-            "Drain saline water and replace with stored freshwater",
-            "Apply double the normal lime dose (20-30kg/1000m²)",
-            "Consider switching to salt-tolerant varieties or shrimp farming",
-            "Contact local agricultural agency immediately"
-          ] : [
-            "염분이 있는 수원에서 물 취수를 즉시 중단",
-            "염수를 배수하고 저장된 담수로 교체",
-            "평소 석회 용량의 두 배 적용 (20-30kg/1000m²)",
-            "내염성 품종이나 새우 양식으로 전환 고려",
-            "즉시 지역 농업 기관에 연락"
-          ],
-          policy: language === "vi"
-            ? "Bạn có thể được hỗ trợ thiệt hại theo Nghị định 02/2017/NĐ-CP. Hãy liên hệ UBND xã để làm hồ sơ."
-            : language === "en"
-            ? "You may be eligible for damage support under Decree 02/2017/ND-CP. Contact your commune People's Committee for documentation."
-            : "법령 02/2017/ND-CP에 따른 피해 지원을 받을 수 있습니다. 서류 작성을 위해 면 인민위원회에 연락하세요."
-        };
+      const crop = cropTypes.find(c => c.value === formData.cropType);
+      if (!crop) {
+        throw new Error("Invalid crop type");
       }
-    } else {
-      diagnosisResult = {
-        status: "warning",
-        message: language === "vi"
-          ? "Không thể xác định ngưỡng cho loại cây trồng. Vui lòng tham khảo chuyên gia."
-          : language === "en"
-          ? "Cannot determine threshold for crop type. Please consult an expert."
-          : "작물 유형에 대한 임계값을 결정할 수 없습니다. 전문가에게 문의하세요.",
-        solutions: language === "vi" 
-          ? ["Liên hệ Trạm Khuyến nông để được tư vấn"]
-          : language === "en"
-          ? ["Contact Agricultural Extension Station for consultation"]
-          : ["상담을 위해 농업지도소에 연락하세요"]
-      };
-    }
 
-    setResult(diagnosisResult);
-    setIsLoading(false);
+      // Call AI diagnosis API
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-diagnosis`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            province: formData.province,
+            district: formData.district,
+            cropType: formData.cropType,
+            cropLabel: getCropLabel(crop),
+            salinityLevel: parseFloat(formData.salinityLevel),
+            threshold: crop.threshold,
+            symptoms: formData.symptoms,
+            imageUrls,
+            language,
+          }),
+        }
+      );
+
+      const diagnosisResult = await response.json();
+      
+      if (diagnosisResult.error && !diagnosisResult.status) {
+        throw new Error(diagnosisResult.error);
+      }
+
+      setResult(diagnosisResult);
+
+      // Save diagnosis to database if user is logged in
+      if (user?.id) {
+        try {
+          await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/save-diagnosis`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              },
+              body: JSON.stringify({
+                clerkUserId: user.id,
+                province: formData.province,
+                district: formData.district,
+                cropType: formData.cropType,
+                salinityLevel: parseFloat(formData.salinityLevel),
+                symptoms: formData.symptoms,
+                imageUrls,
+                diagnosisStatus: diagnosisResult.status,
+                diagnosisMessage: diagnosisResult.message,
+                solutions: diagnosisResult.solutions,
+                policyInfo: diagnosisResult.policy,
+              }),
+            }
+          );
+        } catch (saveError) {
+          console.error("Error saving diagnosis:", saveError);
+        }
+      }
+
+      toast.success(language === "vi" ? "Chẩn đoán hoàn tất!" : "Diagnosis complete!");
+
+    } catch (error) {
+      console.error("Diagnosis error:", error);
+      toast.error(language === "vi" ? "Lỗi chẩn đoán. Vui lòng thử lại." : "Diagnosis failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -321,10 +354,53 @@ export default function Diagnosis() {
                       <Upload className="h-4 w-4" />
                       {t("diagnosis.form.image")}
                     </Label>
-                    <div className="border-2 border-dashed border-border p-8 text-center hover:border-primary transition-colors cursor-pointer">
-                      <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                    
+                    {/* Image previews */}
+                    {uploadedImages.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {uploadedImages.map((img, index) => (
+                          <div key={index} className="relative">
+                            <img 
+                              src={img.preview} 
+                              alt={`Preview ${index + 1}`}
+                              className="w-20 h-20 object-cover border-2 border-border"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index)}
+                              className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageSelect}
+                      className="hidden"
+                    />
+                    
+                    <div 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="border-2 border-dashed border-border p-8 text-center hover:border-primary transition-colors cursor-pointer"
+                    >
+                      {isUploading ? (
+                        <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-2" />
+                      ) : (
+                        <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                      )}
                       <p className="text-sm text-muted-foreground">
-                        {language === "vi" ? "Kéo thả hoặc click để tải ảnh mẫu nước/cây" : language === "en" ? "Drag and drop or click to upload water/plant sample images" : "물/식물 샘플 이미지를 드래그 앤 드롭하거나 클릭하여 업로드"}
+                        {language === "vi" 
+                          ? `Kéo thả hoặc click để tải ảnh (${uploadedImages.length}/5)` 
+                          : language === "en" 
+                          ? `Drag and drop or click to upload (${uploadedImages.length}/5)` 
+                          : `드래그 앤 드롭하거나 클릭하여 업로드 (${uploadedImages.length}/5)`}
                       </p>
                     </div>
                   </div>
@@ -332,7 +408,7 @@ export default function Diagnosis() {
                   <Button 
                     type="submit" 
                     className="w-full border-2 border-foreground shadow-md"
-                    disabled={isLoading || !formData.salinityLevel}
+                    disabled={isLoading || !formData.salinityLevel || !formData.cropType}
                   >
                     {isLoading ? (
                       <>
@@ -374,37 +450,53 @@ export default function Diagnosis() {
 
                     <div>
                       <h4 className="font-bold mb-3 flex items-center gap-2">
-                        <CheckCircle className="h-5 w-5 text-primary" />
+                        <Leaf className="h-4 w-4 text-primary" />
                         {t("diagnosis.result.solutions")}
                       </h4>
                       <ul className="space-y-2">
                         {result.solutions.map((solution, index) => (
-                          <li key={index} className="flex items-start gap-2 p-3 border-2 border-border bg-background">
-                            <span className="flex h-6 w-6 items-center justify-center border-2 border-primary bg-primary text-primary-foreground text-sm font-bold shrink-0">
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="flex h-6 w-6 items-center justify-center border border-primary text-xs font-bold text-primary shrink-0">
                               {index + 1}
                             </span>
-                            <span>{solution}</span>
+                            <span className="text-muted-foreground">{solution}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
 
                     {result.policy && (
-                      <div className="p-4 border-2 border-secondary bg-secondary/20">
-                        <h4 className="font-bold mb-2 text-secondary-foreground">{t("diagnosis.result.policy")}</h4>
-                        <p className="text-sm">{result.policy}</p>
+                      <div className="p-4 border-2 border-primary bg-primary/10">
+                        <h4 className="font-bold mb-2">{t("diagnosis.result.policy")}</h4>
+                        <p className="text-sm text-muted-foreground">{result.policy}</p>
+                      </div>
+                    )}
+
+                    {uploadedUrls.length > 0 && (
+                      <div>
+                        <h4 className="font-bold mb-2">
+                          {language === "vi" ? "Ảnh đã tải lên" : language === "en" ? "Uploaded Images" : "업로드된 이미지"}
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {uploadedUrls.map((url, index) => (
+                            <img 
+                              key={index}
+                              src={url} 
+                              alt={`Uploaded ${index + 1}`}
+                              className="w-16 h-16 object-cover border-2 border-border"
+                            />
+                          ))}
+                        </div>
                       </div>
                     )}
                   </CardContent>
                 </Card>
               ) : (
-                <Card className="border-2 border-border border-dashed h-full flex items-center justify-center">
-                  <CardContent className="text-center py-16">
+                <Card className="border-2 border-border">
+                  <CardContent className="py-12 text-center">
                     <Bot className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-xl font-bold mb-2">{t("diagnosis.ready.title")}</h3>
-                    <p className="text-muted-foreground max-w-sm">
-                      {t("diagnosis.ready.description")}
-                    </p>
+                    <h3 className="font-bold mb-2">{t("diagnosis.result.placeholder.title")}</h3>
+                    <p className="text-muted-foreground">{t("diagnosis.result.placeholder.description")}</p>
                   </CardContent>
                 </Card>
               )}
@@ -414,11 +506,21 @@ export default function Diagnosis() {
                 <CardHeader>
                   <CardTitle className="text-lg">{t("diagnosis.tips.title")}</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 text-sm">
-                  <p>{t("diagnosis.tips.1")}</p>
-                  <p>{t("diagnosis.tips.2")}</p>
-                  <p>{t("diagnosis.tips.3")}</p>
-                  <p>{t("diagnosis.tips.4")}</p>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      {t("diagnosis.tips.tip1")}
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      {t("diagnosis.tips.tip2")}
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      {t("diagnosis.tips.tip3")}
+                    </li>
+                  </ul>
                 </CardContent>
               </Card>
             </div>
