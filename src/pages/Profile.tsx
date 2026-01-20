@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { User, Mail, Phone, MapPin, Shield, Loader2, Save } from "lucide-react";
+import { DiagnosisHistory } from "@/components/DiagnosisHistory";
 import {
   Select,
   SelectContent,
@@ -326,6 +327,9 @@ export default function Profile() {
               )}
             </CardContent>
           </Card>
+
+          {/* Diagnosis History */}
+          <DiagnosisHistory clerkUserId={user.id} />
         </div>
       </div>
     </Layout>
