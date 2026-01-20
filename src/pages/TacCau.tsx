@@ -172,7 +172,7 @@ export default function TacCau() {
               <p className="text-muted-foreground">
                 {t("taccau.story.p2")}
               </p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 border-2 border-border bg-muted text-center">
                   <p className="text-3xl font-bold text-primary">500+</p>
                   <p className="text-sm text-muted-foreground">{t("taccau.stats.hectares")}</p>
@@ -195,7 +195,7 @@ export default function TacCau() {
             <p className="text-muted-foreground">{t("taccau.products.subtitle")}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {products.map((product) => (
               <Card key={product.id} className="border-2 border-border overflow-hidden hover:shadow-lg hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all">
                 <div className="relative aspect-square">

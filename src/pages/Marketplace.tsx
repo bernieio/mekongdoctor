@@ -222,7 +222,7 @@ export default function Marketplace() {
                 <p className="text-muted-foreground">{t("marketplace.supplies.description")}</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {filteredSupplies.map((item) => (
                   <Card key={item.id} className="border-2 border-border overflow-hidden hover:shadow-lg hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all">
                     <div className="relative aspect-square bg-muted flex items-center justify-center">
@@ -273,7 +273,7 @@ export default function Marketplace() {
                 <p className="text-muted-foreground">{t("marketplace.produce.description")}</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {filteredProduce.map((item) => (
                   <Card key={item.id} className="border-2 border-border overflow-hidden hover:shadow-lg hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all">
                     <div className="relative aspect-square bg-muted flex items-center justify-center">
