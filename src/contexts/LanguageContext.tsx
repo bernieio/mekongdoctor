@@ -151,6 +151,17 @@ export const translations: Record<Language, Record<string, string>> = {
     "common.enter": "Nhập",
     "common.threshold": "ngưỡng",
     
+    // Auth
+    "auth.signIn": "Đăng nhập",
+    "auth.signUp": "Đăng ký",
+    "auth.signOut": "Đăng xuất",
+    "auth.signInDescription": "Đăng nhập để sử dụng đầy đủ tính năng",
+    "auth.signUpDescription": "Tạo tài khoản mới để bắt đầu",
+    "auth.noAccount": "Chưa có tài khoản?",
+    "auth.hasAccount": "Đã có tài khoản?",
+    "nav.profile": "Hồ sơ",
+    "nav.settings": "Cài đặt",
+    
     // AI Response Language
     "ai.language": "tiếng Việt",
   },
@@ -293,6 +304,17 @@ export const translations: Record<Language, Record<string, string>> = {
     "common.enter": "Enter",
     "common.threshold": "threshold",
     
+    // Auth
+    "auth.signIn": "Sign In",
+    "auth.signUp": "Sign Up",
+    "auth.signOut": "Sign Out",
+    "auth.signInDescription": "Sign in to access all features",
+    "auth.signUpDescription": "Create a new account to get started",
+    "auth.noAccount": "Don't have an account?",
+    "auth.hasAccount": "Already have an account?",
+    "nav.profile": "Profile",
+    "nav.settings": "Settings",
+    
     // AI Response Language
     "ai.language": "English",
   },
@@ -434,6 +456,17 @@ export const translations: Record<Language, Record<string, string>> = {
     "common.select": "선택",
     "common.enter": "입력",
     "common.threshold": "임계값",
+    
+    // Auth
+    "auth.signIn": "로그인",
+    "auth.signUp": "회원가입",
+    "auth.signOut": "로그아웃",
+    "auth.signInDescription": "모든 기능을 사용하려면 로그인하세요",
+    "auth.signUpDescription": "새 계정을 만들어 시작하세요",
+    "auth.noAccount": "계정이 없으신가요?",
+    "auth.hasAccount": "이미 계정이 있으신가요?",
+    "nav.profile": "프로필",
+    "nav.settings": "설정",
     
     // AI Response Language
     "ai.language": "Korean",
