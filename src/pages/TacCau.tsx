@@ -3,37 +3,50 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Phone, Star, Truck, Shield, Award } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import pineappleImage from "@/assets/pineapple-taccau.jpg";
 
 const products = [
   {
     id: 1,
-    name: "Khóm Tắc Cậu tươi",
-    description: "Khóm tươi nguyên trái, thu hoạch trong ngày. Ngọt thanh, ít chua, thơm đặc trưng.",
+    name: { vi: "Khóm Tắc Cậu tươi", en: "Fresh Tac Cau Pineapple", ko: "신선한 탁카우 파인애플" },
+    description: { 
+      vi: "Khóm tươi nguyên trái, thu hoạch trong ngày. Ngọt thanh, ít chua, thơm đặc trưng.", 
+      en: "Fresh whole pineapple, harvested same day. Mildly sweet, less sour, distinctive fragrance.",
+      ko: "신선한 통 파인애플, 당일 수확. 부드러운 단맛, 적은 신맛, 독특한 향기."
+    },
     price: 35000,
-    unit: "trái",
+    unit: { vi: "trái", en: "fruit", ko: "개" },
     rating: 4.9,
     sold: 1250,
     image: pineappleImage,
-    badge: "Bán chạy",
+    badge: { vi: "Bán chạy", en: "Best Seller", ko: "베스트셀러" },
   },
   {
     id: 2,
-    name: "Bánh khóm Tắc Cậu",
-    description: "Bánh khóm truyền thống, nhân khóm tươi, vỏ bánh giòn tan. Hộp 12 cái.",
+    name: { vi: "Bánh khóm Tắc Cậu", en: "Tac Cau Pineapple Cake", ko: "탁카우 파인애플 케이크" },
+    description: { 
+      vi: "Bánh khóm truyền thống, nhân khóm tươi, vỏ bánh giòn tan. Hộp 12 cái.", 
+      en: "Traditional pineapple cake, fresh pineapple filling, crispy crust. Box of 12.",
+      ko: "전통 파인애플 케이크, 신선한 파인애플 속, 바삭한 껍질. 12개입."
+    },
     price: 85000,
-    unit: "hộp",
+    unit: { vi: "hộp", en: "box", ko: "박스" },
     rating: 4.8,
     sold: 850,
     image: pineappleImage,
-    badge: "Đặc sản",
+    badge: { vi: "Đặc sản", en: "Specialty", ko: "특산품" },
   },
   {
     id: 3,
-    name: "Mứt khóm Tắc Cậu",
-    description: "Mứt khóm thủ công, nguyên liệu 100% khóm tươi, không chất bảo quản.",
+    name: { vi: "Mứt khóm Tắc Cậu", en: "Tac Cau Pineapple Jam", ko: "탁카우 파인애플 잼" },
+    description: { 
+      vi: "Mứt khóm thủ công, nguyên liệu 100% khóm tươi, không chất bảo quản.", 
+      en: "Handmade pineapple jam, 100% fresh pineapple, no preservatives.",
+      ko: "수제 파인애플 잼, 100% 신선한 파인애플, 방부제 무첨가."
+    },
     price: 65000,
-    unit: "hũ 500g",
+    unit: { vi: "hũ 500g", en: "500g jar", ko: "500g 병" },
     rating: 4.7,
     sold: 620,
     image: pineappleImage,
@@ -41,42 +54,53 @@ const products = [
   },
   {
     id: 4,
-    name: "Nước ép khóm",
-    description: "Nước ép khóm nguyên chất, đóng chai thủy tinh. Thùng 6 chai.",
+    name: { vi: "Nước ép khóm", en: "Pineapple Juice", ko: "파인애플 주스" },
+    description: { 
+      vi: "Nước ép khóm nguyên chất, đóng chai thủy tinh. Thùng 6 chai.", 
+      en: "Pure pineapple juice, glass bottled. Box of 6 bottles.",
+      ko: "순수 파인애플 주스, 유리병. 6병입."
+    },
     price: 120000,
-    unit: "thùng",
+    unit: { vi: "thùng", en: "box", ko: "박스" },
     rating: 4.6,
     sold: 380,
     image: pineappleImage,
-    badge: "Mới",
-  },
-];
-
-const features = [
-  {
-    icon: Award,
-    title: "Chất lượng OCOP",
-    description: "Đạt chứng nhận OCOP 4 sao",
-  },
-  {
-    icon: Truck,
-    title: "Giao hàng toàn quốc",
-    description: "Ship COD, nhận hàng trả tiền",
-  },
-  {
-    icon: Shield,
-    title: "Đảm bảo chất lượng",
-    description: "Đổi trả nếu không ưng ý",
+    badge: { vi: "Mới", en: "New", ko: "신제품" },
   },
 ];
 
 export default function TacCau() {
+  const { t, language } = useLanguage();
+
+  const getText = (obj: { vi: string; en: string; ko: string } | null) => {
+    if (!obj) return null;
+    return obj[language] || obj.vi;
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
       currency: 'VND'
     }).format(price);
   };
+
+  const features = [
+    {
+      icon: Award,
+      title: t("taccau.quality"),
+      description: t("taccau.quality.desc"),
+    },
+    {
+      icon: Truck,
+      title: t("taccau.delivery"),
+      description: t("taccau.delivery.desc"),
+    },
+    {
+      icon: Shield,
+      title: t("taccau.guarantee"),
+      description: t("taccau.guarantee.desc"),
+    },
+  ];
 
   return (
     <Layout>
@@ -85,13 +109,13 @@ export default function TacCau() {
         <div className="container">
           <div className="text-center mb-8">
             <Badge className="bg-primary text-primary-foreground border-2 border-foreground mb-4">
-              🍍 Đặc sản Kiên Giang
+              {t("taccau.badge")}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Khóm Tắc Cậu
+              {t("taccau.title")}
             </h1>
             <p className="text-xl text-secondary-foreground/80">
-              Vàng trên đất mặn - Giống khóm chịu phèn mặn, ngọt thanh đặc biệt
+              {t("taccau.subtitle")}
             </p>
           </div>
 
@@ -141,25 +165,21 @@ export default function TacCau() {
               />
             </div>
             <div className="space-y-6">
-              <h2 className="text-3xl font-bold">Câu chuyện Khóm Tắc Cậu</h2>
+              <h2 className="text-3xl font-bold">{t("taccau.story.title")}</h2>
               <p className="text-muted-foreground">
-                Tắc Cậu là vùng đất ven biển thuộc huyện Châu Thành, tỉnh Kiên Giang. 
-                Nơi đây chịu ảnh hưởng nặng nề của xâm nhập mặn, nhưng bà con nông dân 
-                đã biến thách thức thành cơ hội.
+                {t("taccau.story.p1")}
               </p>
               <p className="text-muted-foreground">
-                Giống khóm Queen được chọn lọc và nhân giống qua nhiều thế hệ đã thích nghi 
-                hoàn toàn với điều kiện đất phèn mặn. Độ mặn trong đất tạo nên hương vị 
-                đặc trưng: ngọt thanh, ít chua, thơm nồng nàn.
+                {t("taccau.story.p2")}
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 border-2 border-border bg-muted text-center">
                   <p className="text-3xl font-bold text-primary">500+</p>
-                  <p className="text-sm text-muted-foreground">Hecta canh tác</p>
+                  <p className="text-sm text-muted-foreground">{t("taccau.stats.hectares")}</p>
                 </div>
                 <div className="p-4 border-2 border-border bg-muted text-center">
                   <p className="text-3xl font-bold text-secondary">200+</p>
-                  <p className="text-sm text-muted-foreground">Hộ nông dân</p>
+                  <p className="text-sm text-muted-foreground">{t("taccau.stats.farmers")}</p>
                 </div>
               </div>
             </div>
@@ -171,8 +191,8 @@ export default function TacCau() {
       <section className="py-12 bg-muted">
         <div className="container">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-2">Sản phẩm Khóm Tắc Cậu</h2>
-            <p className="text-muted-foreground">Mua trực tiếp từ nhà vườn, đảm bảo chất lượng</p>
+            <h2 className="text-3xl font-bold mb-2">{t("taccau.products.title")}</h2>
+            <p className="text-muted-foreground">{t("taccau.products.subtitle")}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -181,19 +201,19 @@ export default function TacCau() {
                 <div className="relative aspect-square">
                   <img
                     src={product.image}
-                    alt={product.name}
+                    alt={getText(product.name) || ""}
                     className="w-full h-full object-cover"
                   />
                   {product.badge && (
                     <Badge className="absolute top-3 right-3 bg-accent text-accent-foreground border-2 border-foreground">
-                      {product.badge}
+                      {getText(product.badge)}
                     </Badge>
                   )}
                 </div>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
+                  <CardTitle className="text-lg">{getText(product.name)}</CardTitle>
                   <CardDescription className="line-clamp-2">
-                    {product.description}
+                    {getText(product.description)}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pb-2">
@@ -203,18 +223,18 @@ export default function TacCau() {
                       <span className="text-sm font-medium">{product.rating}</span>
                     </div>
                     <span className="text-sm text-muted-foreground">
-                      | Đã bán {product.sold}
+                      | {t("marketplace.sold")} {product.sold}
                     </span>
                   </div>
                   <p className="text-2xl font-bold text-primary">
                     {formatPrice(product.price)}
-                    <span className="text-sm font-normal text-muted-foreground">/{product.unit}</span>
+                    <span className="text-sm font-normal text-muted-foreground">/{getText(product.unit)}</span>
                   </p>
                 </CardContent>
                 <CardFooter className="gap-2">
                   <Button className="flex-1 border-2 border-foreground" size="sm">
                     <ShoppingCart className="mr-2 h-4 w-4" />
-                    Thêm giỏ
+                    {t("taccau.addcart")}
                   </Button>
                   <Button variant="outline" size="sm" className="border-2">
                     <Phone className="h-4 w-4" />
@@ -230,14 +250,13 @@ export default function TacCau() {
       <section className="py-12 bg-primary">
         <div className="container text-center">
           <h2 className="text-3xl font-bold text-primary-foreground mb-4">
-            Bạn là nông dân trồng Khóm?
+            {t("taccau.cta.title")}
           </h2>
           <p className="text-primary-foreground/80 mb-6 max-w-2xl mx-auto">
-            Đăng ký trở thành đối tác của Mekong Doctor để tiếp cận khách hàng trên toàn quốc. 
-            Chúng tôi hỗ trợ vận chuyển, marketing và đảm bảo giá tốt nhất cho bạn.
+            {t("taccau.cta.description")}
           </p>
           <Button size="lg" className="bg-secondary text-secondary-foreground border-2 border-foreground shadow-md">
-            Đăng ký bán hàng
+            {t("taccau.cta.register")}
           </Button>
         </div>
       </section>
