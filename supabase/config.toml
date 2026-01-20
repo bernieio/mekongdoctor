@@ -1,1 +1,4 @@
 project_id = "rgvvcbedockykchjwvth"
+
+[functions.clerk-webhook]
+verify_jwt = false
