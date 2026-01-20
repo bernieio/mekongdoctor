@@ -68,13 +68,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "diagnoses_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       loan_applications: {
@@ -108,13 +101,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "loan_applications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -194,13 +180,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "scholarship_applications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       user_roles: {
@@ -228,13 +207,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_roles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -272,41 +244,11 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "venture_applications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
     }
     Views: {
-      profiles_public: {
-        Row: {
-          avatar_url: string | null
-          created_at: string | null
-          full_name: string | null
-          id: string | null
-          province: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string | null
-          full_name?: string | null
-          id?: string | null
-          province?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string | null
-          full_name?: string | null
-          id?: string | null
-          province?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       get_profile_id: { Args: { _clerk_user_id: string }; Returns: string }
