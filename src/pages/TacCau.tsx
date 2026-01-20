@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Phone, Star, Truck, Shield, Award } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import pineappleImage from "@/assets/pineapple-taccau.jpg";
+import banhKhomImage from "@/assets/banh-khom-taccau.jpg";
+import mutKhomImage from "@/assets/mut-khom-taccau.jpg";
+import nuocEpKhomImage from "@/assets/nuoc-ep-khom.jpg";
 
 const products = [
   {
@@ -34,7 +37,7 @@ const products = [
     unit: { vi: "hộp", en: "box", ko: "박스" },
     rating: 4.8,
     sold: 850,
-    image: pineappleImage,
+    image: banhKhomImage,
     badge: { vi: "Đặc sản", en: "Specialty", ko: "특산품" },
   },
   {
@@ -49,7 +52,7 @@ const products = [
     unit: { vi: "hũ 500g", en: "500g jar", ko: "500g 병" },
     rating: 4.7,
     sold: 620,
-    image: pineappleImage,
+    image: mutKhomImage,
     badge: null,
   },
   {
@@ -64,7 +67,7 @@ const products = [
     unit: { vi: "thùng", en: "box", ko: "박스" },
     rating: 4.6,
     sold: 380,
-    image: pineappleImage,
+    image: nuocEpKhomImage,
     badge: { vi: "Mới", en: "New", ko: "신제품" },
   },
 ];
