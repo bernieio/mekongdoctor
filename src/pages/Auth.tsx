@@ -12,19 +12,19 @@ export default function Auth() {
 
   return (
     <Layout>
-      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12 px-4">
-        <div className="w-full max-w-md space-y-6">
+      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center py-6 sm:py-12 px-3 sm:px-4">
+        <div className="w-full max-w-[min(100%,24rem)] sm:max-w-md space-y-4 sm:space-y-6">
           {/* Logo and Welcome */}
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-1.5 sm:space-y-2">
             <div className="flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center border-2 border-primary bg-primary">
-                <Droplets className="h-10 w-10 text-primary-foreground" />
+              <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center border-2 border-primary bg-primary rounded-lg">
+                <Droplets className="h-7 w-7 sm:h-10 sm:w-10 text-primary-foreground" />
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {mode === "signin" ? t("auth.signIn") : t("auth.signUp")}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground px-2">
               {mode === "signin" 
                 ? t("auth.signInDescription") 
                 : t("auth.signUpDescription")}
@@ -32,8 +32,8 @@ export default function Auth() {
           </div>
 
           {/* Clerk Auth Component */}
-          <Card className="border-2">
-            <CardContent className="pt-6">
+          <Card className="border-2 shadow-sm">
+            <CardContent className="p-4 sm:pt-6 sm:px-6">
               {mode === "signin" ? (
                 <SignIn 
                   routing="hash"
@@ -45,9 +45,13 @@ export default function Auth() {
                       card: "shadow-none p-0 w-full",
                       headerTitle: "hidden",
                       headerSubtitle: "hidden",
-                      socialButtonsBlockButton: "border-2 border-border hover:bg-muted",
-                      formButtonPrimary: "bg-primary hover:bg-primary/90",
+                      socialButtonsBlockButton: "border-2 border-border hover:bg-muted text-sm sm:text-base py-2.5 sm:py-3",
+                      formFieldInput: "text-sm sm:text-base py-2 sm:py-2.5",
+                      formButtonPrimary: "bg-primary hover:bg-primary/90 text-sm sm:text-base py-2.5 sm:py-3",
                       footerAction: "hidden",
+                      formFieldLabel: "text-sm",
+                      identityPreviewText: "text-sm",
+                      formFieldAction: "text-sm",
                     },
                   }}
                 />
@@ -62,9 +66,13 @@ export default function Auth() {
                       card: "shadow-none p-0 w-full",
                       headerTitle: "hidden",
                       headerSubtitle: "hidden",
-                      socialButtonsBlockButton: "border-2 border-border hover:bg-muted",
-                      formButtonPrimary: "bg-primary hover:bg-primary/90",
+                      socialButtonsBlockButton: "border-2 border-border hover:bg-muted text-sm sm:text-base py-2.5 sm:py-3",
+                      formFieldInput: "text-sm sm:text-base py-2 sm:py-2.5",
+                      formButtonPrimary: "bg-primary hover:bg-primary/90 text-sm sm:text-base py-2.5 sm:py-3",
                       footerAction: "hidden",
+                      formFieldLabel: "text-sm",
+                      identityPreviewText: "text-sm",
+                      formFieldAction: "text-sm",
                     },
                   }}
                 />
@@ -74,13 +82,14 @@ export default function Auth() {
 
           {/* Toggle between SignIn and SignUp */}
           <div className="text-center space-y-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               {mode === "signin" ? t("auth.noAccount") : t("auth.hasAccount")}
             </p>
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-              className="border-2"
+              className="border-2 text-sm sm:text-base px-4 sm:px-6"
             >
               {mode === "signin" ? t("auth.signUp") : t("auth.signIn")}
             </Button>
