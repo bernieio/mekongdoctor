@@ -58,15 +58,15 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                <span>1900-xxxx-xx</span>
+                <span>+84563******</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                <span>contact@mekongdoctor.vn</span>
+                <span>phunhuanbuilder@gmail.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
-                <span>TP. Cần Thơ, Việt Nam</span>
+                <span>TP. Hồ Chí Minh, Việt Nam</span>
               </li>
             </ul>
           </div>
