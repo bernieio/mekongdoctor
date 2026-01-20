@@ -80,11 +80,44 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      profiles_public: {
+        Row: {
+          avatar_url: string | null
+          clerk_user_id: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string | null
+          province: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          clerk_user_id?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          province?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          clerk_user_id?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          province?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_profile_id: { Args: { _clerk_user_id: string }; Returns: string }

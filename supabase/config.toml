@@ -2,3 +2,6 @@ project_id = "rgvvcbedockykchjwvth"
 
 [functions.clerk-webhook]
 verify_jwt = false
+
+[functions.get-profile]
+verify_jwt = false

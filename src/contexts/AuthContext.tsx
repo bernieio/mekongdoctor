@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Profile {
@@ -14,15 +14,13 @@ interface Profile {
   updated_at: string;
 }
 
-interface UserRole {
-  role: "farmer" | "expert" | "admin";
-}
+type RoleType = "farmer" | "expert" | "admin";
 
 interface AuthContextType {
   profile: Profile | null;
-  roles: UserRole[];
+  roles: RoleType[];
   isLoading: boolean;
-  hasRole: (role: "farmer" | "expert" | "admin") => boolean;
+  hasRole: (role: RoleType) => boolean;
   isAdmin: () => boolean;
   isExpert: () => boolean;
   isFarmer: () => boolean;
@@ -34,39 +32,29 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [roles, setRoles] = useState<UserRole[]>([]);
+  const [roles, setRoles] = useState<RoleType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchProfile = async (clerkUserId: string) => {
     try {
       setIsLoading(true);
 
-      // Fetch profile
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("clerk_user_id", clerkUserId)
-        .maybeSingle();
+      // Use edge function to fetch profile (bypasses RLS)
+      const { data, error } = await supabase.functions.invoke("get-profile", {
+        body: { clerkUserId },
+      });
 
-      if (profileError) {
-        console.error("Error fetching profile:", profileError);
+      if (error) {
+        console.error("Error fetching profile:", error);
         return;
       }
 
-      if (profileData) {
-        setProfile(profileData as Profile);
-
-        // Fetch roles
-        const { data: rolesData, error: rolesError } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", profileData.id);
-
-        if (rolesError) {
-          console.error("Error fetching roles:", rolesError);
-        } else {
-          setRoles((rolesData as UserRole[]) || []);
-        }
+      if (data?.profile) {
+        setProfile(data.profile as Profile);
+        setRoles((data.roles as RoleType[]) || []);
+      } else {
+        setProfile(null);
+        setRoles([]);
       }
     } catch (error) {
       console.error("Error in fetchProfile:", error);
@@ -84,8 +72,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRoles([]);
   };
 
-  const hasRole = (role: "farmer" | "expert" | "admin"): boolean => {
-    return roles.some((r) => r.role === role);
+  const hasRole = (role: RoleType): boolean => {
+    return roles.includes(role);
   };
 
   const isAdmin = () => hasRole("admin");
