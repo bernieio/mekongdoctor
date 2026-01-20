@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.update-profile]
 verify_jwt = false
+
+[functions.get-mapbox-token]
+verify_jwt = false
+
+[functions.admin-get-users]
+verify_jwt = false
