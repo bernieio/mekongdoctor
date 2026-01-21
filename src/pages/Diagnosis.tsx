@@ -546,29 +546,6 @@ export default function Diagnosis() {
                 </Card>
               )}
 
-              {/* Quick Tips */}
-              <Card className="border-2 border-border">
-                <CardHeader>
-                  <CardTitle className="text-lg">{t("diagnosis.tips.title")}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                      {t("diagnosis.tips.tip1")}
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                      {t("diagnosis.tips.tip2")}
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                      {t("diagnosis.tips.tip3")}
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
               {/* Salinity Measurement Tutorial */}
               <Card className="border-2 border-border">
                 <CardHeader>
