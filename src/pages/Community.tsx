@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useUser } from "@clerk/clerk-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +30,6 @@ interface VentureForm {
 export default function Community() {
   const { toast } = useToast();
   const { t } = useLanguage();
-  const { user, isSignedIn } = useUser();
   const [activeTab, setActiveTab] = useState("scholarship");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,20 +56,12 @@ export default function Community() {
 
   const handleScholarshipSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSignedIn || !user) {
-      toast({
-        title: "Vui lòng đăng nhập",
-        description: "Bạn cần đăng nhập để gửi đơn đăng ký.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     setIsSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke("save-community-application", {
         body: {
-          clerkUserId: user.id,
+          clerkUserId: null,
           applicationType: "scholarship",
           fullName: scholarshipForm.fullName,
           email: scholarshipForm.email,
@@ -100,20 +90,12 @@ export default function Community() {
 
   const handleLoanSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSignedIn || !user) {
-      toast({
-        title: "Vui lòng đăng nhập",
-        description: "Bạn cần đăng nhập để gửi đơn đăng ký.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     setIsSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke("save-community-application", {
         body: {
-          clerkUserId: user.id,
+          clerkUserId: null,
           applicationType: "loan",
           fullName: loanForm.fullName,
           phone: loanForm.phone,
@@ -141,20 +123,12 @@ export default function Community() {
 
   const handleVentureSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSignedIn || !user) {
-      toast({
-        title: "Vui lòng đăng nhập",
-        description: "Bạn cần đăng nhập để gửi đơn đăng ký.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     setIsSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke("save-community-application", {
         body: {
-          clerkUserId: user.id,
+          clerkUserId: null,
           applicationType: "venture",
           businessName: ventureForm.businessName,
           phone: ventureForm.phone,

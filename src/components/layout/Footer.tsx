@@ -1,4 +1,5 @@
-import { Droplets, Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
+import logo from "@/assets/logo/logo.png";
 
 export function Footer() {
   return (
@@ -7,9 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           <div className="space-y-4 col-span-2 md:col-span-1">
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center border-2 border-sidebar-primary bg-sidebar-primary shrink-0">
-                <Droplets className="h-6 w-6 text-sidebar-primary-foreground" />
-              </div>
+              <img src={logo} alt="Mekong Doctor" className="h-10 w-10" />
               <span className="text-lg md:text-xl font-bold">Mekong Doctor</span>
             </div>
             <p className="text-sm text-sidebar-foreground/80">

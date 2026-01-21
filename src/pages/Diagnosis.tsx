@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Bot, Droplets, MapPin, Leaf, Upload, Send, AlertTriangle, CheckCircle, Loader2, X, Image as ImageIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
 
 const provinces = [
@@ -37,9 +36,8 @@ interface DiagnosisResult {
 
 export default function Diagnosis() {
   const { t, language } = useLanguage();
-  const { user } = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [formData, setFormData] = useState({
     province: "",
     district: "",
@@ -90,14 +88,14 @@ export default function Diagnosis() {
       for (const { file } of uploadedImages) {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("userId", user?.id || "anonymous");
+        formData.append("userId", "anonymous");
 
         const response = await fetch(
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-r2`,
           {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
             },
             body: formData,
           }
@@ -132,14 +130,14 @@ export default function Diagnosis() {
         throw new Error("Invalid crop type");
       }
 
-      // Call AI diagnosis API
+      // Call AI diagnosis API (Anonymous)
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-diagnosis`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
           },
           body: JSON.stringify({
             province: formData.province,
@@ -156,42 +154,40 @@ export default function Diagnosis() {
       );
 
       const diagnosisResult = await response.json();
-      
+
       if (diagnosisResult.error && !diagnosisResult.status) {
         throw new Error(diagnosisResult.error);
       }
 
       setResult(diagnosisResult);
 
-      // Save diagnosis to database if user is logged in
-      if (user?.id) {
-        try {
-          await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/save-diagnosis`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-              },
-              body: JSON.stringify({
-                clerkUserId: user.id,
-                province: formData.province,
-                district: formData.district,
-                cropType: formData.cropType,
-                salinityLevel: parseFloat(formData.salinityLevel),
-                symptoms: formData.symptoms,
-                imageUrls,
-                diagnosisStatus: diagnosisResult.status,
-                diagnosisMessage: diagnosisResult.message,
-                solutions: diagnosisResult.solutions,
-                policyInfo: diagnosisResult.policy,
-              }),
-            }
-          );
-        } catch (saveError) {
-          console.error("Error saving diagnosis:", saveError);
-        }
+      // Save diagnosis to database (Anonymous allowed)
+      try {
+        await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/save-diagnosis`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({
+              clerkUserId: null, // Anonymous user
+              province: formData.province,
+              district: formData.district,
+              cropType: formData.cropType,
+              salinityLevel: parseFloat(formData.salinityLevel),
+              symptoms: formData.symptoms,
+              imageUrls,
+              diagnosisStatus: diagnosisResult.status,
+              diagnosisMessage: diagnosisResult.message,
+              solutions: diagnosisResult.solutions,
+              policyInfo: diagnosisResult.policy,
+            }),
+          }
+        );
+      } catch (saveError) {
+        console.error("Error saving diagnosis:", saveError);
       }
 
       toast.success(language === "vi" ? "Chẩn đoán hoàn tất!" : "Diagnosis complete!");
@@ -274,7 +270,7 @@ export default function Diagnosis() {
                         value={formData.province}
                         onValueChange={(value) => setFormData(prev => ({ ...prev, province: value }))}
                       >
-                        <SelectTrigger id="province" className="border-2">
+                        <SelectTrigger id="province" className="border-2 h-12 text-lg">
                           <SelectValue placeholder={t("common.select")} />
                         </SelectTrigger>
                         <SelectContent>
@@ -294,7 +290,7 @@ export default function Diagnosis() {
                         value={formData.district}
                         onChange={(e) => setFormData(prev => ({ ...prev, district: e.target.value }))}
                         placeholder={t("common.enter")}
-                        className="border-2"
+                        className="border-2 h-12 text-lg"
                       />
                     </div>
                   </div>
@@ -308,7 +304,7 @@ export default function Diagnosis() {
                       value={formData.cropType}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, cropType: value }))}
                     >
-                      <SelectTrigger id="cropType" className="border-2">
+                      <SelectTrigger id="cropType" className="border-2 h-12 text-lg">
                         <SelectValue placeholder={t("common.select")} />
                       </SelectTrigger>
                       <SelectContent>
@@ -324,7 +320,7 @@ export default function Diagnosis() {
                   <div className="space-y-2">
                     <Label htmlFor="salinity" className="flex items-center gap-2">
                       <Droplets className="h-4 w-4" />
-                      {t("diagnosis.form.salinity")}
+                      {t("diagnosis.form.salinity")} (g/L - phần nghìn)
                     </Label>
                     <Input
                       id="salinity"
@@ -332,10 +328,20 @@ export default function Diagnosis() {
                       step="0.1"
                       value={formData.salinityLevel}
                       onChange={(e) => setFormData(prev => ({ ...prev, salinityLevel: e.target.value }))}
-                      placeholder="3.5"
-                      className="border-2"
+                      placeholder="3.5 g/L"
+                      className="border-2 h-12 text-lg"
                       required
                     />
+                    {parseFloat(formData.salinityLevel) > 40 && (
+                      <div className="flex items-center gap-2 mt-2 text-destructive font-bold animate-pulse">
+                        <AlertTriangle className="h-5 w-5" />
+                        <span>
+                          {language === "vi"
+                            ? "CẢNH BÁO: Độ mặn > 40 g/L là rất cao! Vui lòng kiểm tra lại đơn vị (ppm vs ppt)."
+                            : "WARNING: > 40 g/L is extremely high! Check your units."}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -345,7 +351,7 @@ export default function Diagnosis() {
                       value={formData.symptoms}
                       onChange={(e) => setFormData(prev => ({ ...prev, symptoms: e.target.value }))}
                       placeholder={language === "vi" ? "Mô tả các triệu chứng: lá vàng, cháy lá, cây héo..." : language === "en" ? "Describe symptoms: yellow leaves, leaf burn, wilting..." : "증상 설명: 노란 잎, 잎 화상, 시들음..."}
-                      className="border-2 min-h-[100px]"
+                      className="border-2 min-h-[100px] text-lg"
                     />
                   </div>
 
@@ -354,14 +360,14 @@ export default function Diagnosis() {
                       <Upload className="h-4 w-4" />
                       {t("diagnosis.form.image")}
                     </Label>
-                    
+
                     {/* Image previews */}
                     {uploadedImages.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-2">
                         {uploadedImages.map((img, index) => (
                           <div key={index} className="relative">
-                            <img 
-                              src={img.preview} 
+                            <img
+                              src={img.preview}
                               alt={`Preview ${index + 1}`}
                               className="w-20 h-20 object-cover border-2 border-border"
                             />
@@ -385,8 +391,8 @@ export default function Diagnosis() {
                       onChange={handleImageSelect}
                       className="hidden"
                     />
-                    
-                    <div 
+
+                    <div
                       onClick={() => fileInputRef.current?.click()}
                       className="border-2 border-dashed border-border p-8 text-center hover:border-primary transition-colors cursor-pointer"
                     >
@@ -396,18 +402,18 @@ export default function Diagnosis() {
                         <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                       )}
                       <p className="text-sm text-muted-foreground">
-                        {language === "vi" 
-                          ? `Kéo thả hoặc click để tải ảnh (${uploadedImages.length}/5)` 
-                          : language === "en" 
-                          ? `Drag and drop or click to upload (${uploadedImages.length}/5)` 
-                          : `드래그 앤 드롭하거나 클릭하여 업로드 (${uploadedImages.length}/5)`}
+                        {language === "vi"
+                          ? `Kéo thả hoặc click để tải ảnh (${uploadedImages.length}/5)`
+                          : language === "en"
+                            ? `Drag and drop or click to upload (${uploadedImages.length}/5)`
+                            : `드래그 앤 드롭하거나 클릭하여 업로드 (${uploadedImages.length}/5)`}
                       </p>
                     </div>
                   </div>
 
-                  <Button 
-                    type="submit" 
-                    className="w-full border-2 border-foreground shadow-md"
+                  <Button
+                    type="submit"
+                    className="w-full border-2 border-foreground shadow-md h-12 text-lg"
                     disabled={isLoading || !formData.salinityLevel || !formData.cropType}
                   >
                     {isLoading ? (
@@ -479,9 +485,9 @@ export default function Diagnosis() {
                         </h4>
                         <div className="flex flex-wrap gap-2">
                           {uploadedUrls.map((url, index) => (
-                            <img 
+                            <img
                               key={index}
-                              src={url} 
+                              src={url}
                               alt={`Uploaded ${index + 1}`}
                               className="w-16 h-16 object-cover border-2 border-border"
                             />

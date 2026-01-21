@@ -1,5 +1,18 @@
-import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 import "./index.css";
+import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
-createRoot(document.getElementById("root")!).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+        <LanguageProvider>
+            <AuthProvider>
+                <App />
+                <Toaster />
+            </AuthProvider>
+        </LanguageProvider>
+    </React.StrictMode>
+);
