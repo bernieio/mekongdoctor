@@ -15,30 +15,18 @@ const DiagnosisRequestSchema = z.object({
 });
 
 serve(async (req) => {
-  const allowedOriginsEnv = Deno.env.get("ALLOWED_ORIGINS");
-  const allowedOrigins = allowedOriginsEnv ? allowedOriginsEnv.split(",").map(o => o.trim()) : [];
-  const origin = req.headers.get("origin") ?? "";
-  const isAllowed = allowedOrigins.length > 0 && allowedOrigins.includes(origin);
-
-  console.log("CORS Check:", { origin, allowedOrigins, isAllowed });
-
+  // Universal CORS - Allow all origins
   const corsHeaders = {
-    "Access-Control-Allow-Origin": isAllowed ? origin : "*",
+    "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   };
 
+  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response("ok", { headers: corsHeaders });
   }
 
-  // Only enforce origin check if ALLOWED_ORIGINS is explicitly set
-  if (allowedOrigins.length > 0 && !isAllowed) {
-    console.error(`Blocked request from unauthorized origin: ${origin}`);
-    return new Response(
-      JSON.stringify({ error: "Forbidden: Unauthorized origin" }),
-      { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
+  console.log("Request received from:", req.headers.get("origin"));
 
   try {
     const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
