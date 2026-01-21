@@ -568,6 +568,37 @@ export default function Diagnosis() {
                   </ul>
                 </CardContent>
               </Card>
+
+              {/* Salinity Measurement Tutorial */}
+              <Card className="border-2 border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg">
+                    {language === "vi"
+                      ? "📏 Hướng dẫn đo độ mặn"
+                      : language === "en"
+                        ? "📏 How to Measure Salinity"
+                        : "📏 염도 측정 방법"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="aspect-[9/16] max-w-xs mx-auto border-2 border-border overflow-hidden rounded-lg">
+                    <iframe
+                      src="https://www.youtube.com/embed/kaVQ--J2DtU"
+                      title="Hướng dẫn đo độ mặn"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full"
+                    />
+                  </div>
+                  <p className="text-sm text-muted-foreground text-center mt-4">
+                    {language === "vi"
+                      ? "Video hướng dẫn cách đo độ mặn nước chính xác"
+                      : language === "en"
+                        ? "Video tutorial on how to accurately measure water salinity"
+                        : "정확한 수질 염도 측정 방법 비디오 튜토리얼"}
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
