@@ -499,10 +499,48 @@ export default function Diagnosis() {
                 </Card>
               ) : (
                 <Card className="border-2 border-border">
-                  <CardContent className="py-12 text-center">
-                    <Bot className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="font-bold mb-2">{t("diagnosis.result.placeholder.title")}</h3>
-                    <p className="text-muted-foreground">{t("diagnosis.result.placeholder.description")}</p>
+                  <CardContent className="py-12">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="flex h-12 w-12 items-center justify-center border-2 border-border bg-muted animate-pulse">
+                        <Bot className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-6 bg-muted rounded animate-pulse w-48" />
+                        <div className="h-4 bg-muted rounded animate-pulse w-32" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <div className="h-4 bg-muted rounded animate-pulse w-full" />
+                        <div className="h-4 bg-muted rounded animate-pulse w-5/6" />
+                        <div className="h-4 bg-muted rounded animate-pulse w-4/6" />
+                      </div>
+
+                      <div className="space-y-2 pt-4">
+                        <div className="h-5 bg-muted rounded animate-pulse w-40" />
+                        <div className="flex gap-2">
+                          <div className="h-4 w-4 bg-muted rounded-full animate-pulse" />
+                          <div className="h-4 bg-muted rounded animate-pulse flex-1" />
+                        </div>
+                        <div className="flex gap-2">
+                          <div className="h-4 w-4 bg-muted rounded-full animate-pulse" />
+                          <div className="h-4 bg-muted rounded animate-pulse flex-1" />
+                        </div>
+                        <div className="flex gap-2">
+                          <div className="h-4 w-4 bg-muted rounded-full animate-pulse" />
+                          <div className="h-4 bg-muted rounded animate-pulse flex-1" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-center text-sm text-muted-foreground mt-6">
+                      {language === "vi"
+                        ? "Điền thông tin và gửi để nhận kết quả chẩn đoán AI"
+                        : language === "en"
+                          ? "Fill in the information and submit to receive AI diagnosis"
+                          : "정보를 입력하고 제출하여 AI 진단을 받으세요"}
+                    </p>
                   </CardContent>
                 </Card>
               )}
