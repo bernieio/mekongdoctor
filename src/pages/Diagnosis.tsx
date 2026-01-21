@@ -24,6 +24,7 @@ const cropTypes = [
   { value: "xoai", label: "Xoài", labelEn: "Mango", labelKo: "망고", threshold: 2 },
   { value: "buoi", label: "Bưởi", labelEn: "Pomelo", labelKo: "포멜로", threshold: 2 },
   { value: "khom", label: "Khóm (Dứa)", labelEn: "Pineapple", labelKo: "파인애플", threshold: 3 },
+  { value: "dua", label: "Dừa", labelEn: "Coconut", labelKo: "코코넛", threshold: 4 },
   { value: "rau-mau", label: "Rau màu", labelEn: "Vegetables", labelKo: "채소", threshold: 1.5 },
 ];
 
