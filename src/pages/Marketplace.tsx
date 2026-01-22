@@ -7,67 +7,87 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShoppingBag, Search, ShoppingCart, Phone, Star, Filter, Package, Wheat, Shrub } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import salinityMeter from "@/assets/may-do-do-man-dat.jpg";
+import organicFertilizer from "@/assets/phan-bon-huu-co.png";
+import riceSeeds from "@/assets/lua-om18.png";
+import agriculturalLime from "@/assets/voi-nong-nghiep-25kg.webp";
 
 const supplies = [
   {
     id: 1,
-    name: { vi: "Máy đo độ mặn EC", en: "EC Salinity Meter", ko: "EC 염도 측정기" },
-    description: { 
-      vi: "Máy đo độ mặn/độ dẫn điện cầm tay, chính xác cao, chống nước IP67", 
-      en: "Handheld salinity/conductivity meter, high accuracy, IP67 waterproof",
-      ko: "휴대용 염도/전도도 측정기, 고정밀, IP67 방수"
+    name: {
+      vi: "Máy đo độ mặn đất EZDO 8200M",
+      en: "EZDO 8200M Soil Salinity Meter",
+      ko: "EZDO 8200M 토양 염도 측정기"
     },
-    price: 850000,
+    description: {
+      vi: "Máy đo đa chức năng: pH, ORP, EC, TDS, độ mặn, nhiệt độ. Hãng EZDO Đài Loan, bảo hành 12 tháng. Độ chính xác cao ±0.01 pH, chống nước, lưu trữ dữ liệu.",
+      en: "Multi-function meter: pH, ORP, EC, TDS, salinity, temperature. EZDO Taiwan brand, 12-month warranty. High accuracy ±0.01 pH, waterproof, data storage.",
+      ko: "다기능 측정기: pH, ORP, EC, TDS, 염도, 온도. EZDO 대만 브랜드, 12개월 보증. 높은 정확도 ±0.01 pH, 방수, 데이터 저장."
+    },
+    price: 3090000,
     unit: { vi: "cái", en: "unit", ko: "개" },
-    rating: 4.8,
-    sold: 320,
+    rating: 4.9,
+    sold: 156,
     category: { vi: "Thiết bị", en: "Equipment", ko: "장비" },
-    image: "/placeholder.svg",
+    image: salinityMeter,
   },
   {
     id: 2,
-    name: { vi: "Phân bón hữu cơ Mekong", en: "Mekong Organic Fertilizer", ko: "메콩 유기 비료" },
-    description: { 
-      vi: "Phân bón hữu cơ vi sinh, phù hợp với đất nhiễm mặn. Bao 25kg", 
-      en: "Microbial organic fertilizer, suitable for saline soil. 25kg bag",
-      ko: "미생물 유기 비료, 염분 토양에 적합. 25kg 포대"
+    name: {
+      vi: "Phân bón hữu cơ HCVS MK219 (50kg)",
+      en: "HCVS MK219 Organic Fertilizer (50kg)",
+      ko: "HCVS MK219 유기 비료 (50kg)"
     },
-    price: 180000,
+    description: {
+      vi: "Phân hữu cơ 20%, vi sinh vật phân giải lân/xenlulo/cố định đạm 1x10⁶ CFU/g. Giàu Zn, Cu, B, Mn, Fe. Phù hợp đất nhiễm mặn, cải tạo đất hiệu quả.",
+      en: "20% organic matter, microorganisms for P/cellulose decomposition and N fixation 1x10⁶ CFU/g. Rich in Zn, Cu, B, Mn, Fe. Suitable for saline soil, effective soil improvement.",
+      ko: "유기물 20%, P/셀룰로오스 분해 및 N 고정 미생물 1x10⁶ CFU/g. Zn, Cu, B, Mn, Fe 풍부. 염분 토양에 적합, 효과적인 토양 개선."
+    },
+    price: 370000,
     unit: { vi: "bao", en: "bag", ko: "포대" },
-    rating: 4.6,
-    sold: 1200,
+    rating: 4.7,
+    sold: 892,
     category: { vi: "Phân bón", en: "Fertilizer", ko: "비료" },
-    image: "/placeholder.svg",
+    image: organicFertilizer,
   },
   {
     id: 3,
-    name: { vi: "Giống lúa chịu mặn OM18", en: "OM18 Salt-tolerant Rice", ko: "OM18 내염성 쌀" },
-    description: { 
-      vi: "Giống lúa OM18 chịu mặn tốt, năng suất cao, thời gian sinh trưởng 95-100 ngày", 
-      en: "OM18 rice variety with good salt tolerance, high yield, 95-100 day growth period",
-      ko: "OM18 벼 품종, 우수한 내염성, 높은 수확량, 95-100일 생육 기간"
+    name: {
+      vi: "Giống lúa OM18 chịu mặn",
+      en: "OM18 Salt-tolerant Rice Seeds",
+      ko: "OM18 내염성 벼 종자"
     },
-    price: 35000,
+    description: {
+      vi: "Giống lúa thuần OM18 do Viện Lúa ĐBSCL chọn tạo. Chịu mặn tốt, năng suất cao 6-7 tấn/ha, thời gian sinh trưởng 95-100 ngày. Phù hợp vùng xâm nhập mặn.",
+      en: "Pure OM18 rice variety by Mekong Delta Rice Institute. Good salt tolerance, high yield 6-7 tons/ha, 95-100 day growth period. Suitable for saline intrusion areas.",
+      ko: "메콩 델타 쌀 연구소의 순수 OM18 벼 품종. 우수한 내염성, 높은 수확량 6-7톤/ha, 95-100일 생육 기간. 염분 침입 지역에 적합."
+    },
+    price: 7200,
     unit: { vi: "kg", en: "kg", ko: "kg" },
-    rating: 4.9,
-    sold: 850,
+    rating: 4.8,
+    sold: 2340,
     category: { vi: "Giống", en: "Seeds", ko: "종자" },
-    image: "/placeholder.svg",
+    image: riceSeeds,
   },
   {
     id: 4,
-    name: { vi: "Vôi nông nghiệp", en: "Agricultural Lime", ko: "농업용 석회" },
-    description: { 
-      vi: "Vite nông nghiệp dùng cải tạo đất phèn mặn. Bao 25kg", 
-      en: "Agricultural lime for acidic saline soil improvement. 25kg bag",
-      ko: "산성 염분 토양 개선용 농업용 석회. 25kg 포대"
+    name: {
+      vi: "Vôi bột nông nghiệp (25kg)",
+      en: "Agricultural Lime Powder (25kg)",
+      ko: "농업용 석회 분말 (25kg)"
     },
-    price: 45000,
+    description: {
+      vi: "Vôi bột CaO 65-90%, nung từ đá vôi CaCO₃ ở 900°C. Cải tạo đất phèn mặn, điều chỉnh pH, bổ sung canxi. An toàn, hiệu quả cao cho nông nghiệp ĐBSCL.",
+      en: "Lime powder CaO 65-90%, calcined from CaCO₃ limestone at 900°C. Improves acidic saline soil, adjusts pH, supplements calcium. Safe and highly effective for Mekong Delta agriculture.",
+      ko: "석회 분말 CaO 65-90%, 900°C에서 CaCO₃ 석회석을 소성. 산성 염분 토양 개선, pH 조정, 칼슘 보충. 메콩 델타 농업에 안전하고 매우 효과적."
+    },
+    price: 90000,
     unit: { vi: "bao", en: "bag", ko: "포대" },
-    rating: 4.5,
-    sold: 2100,
+    rating: 4.6,
+    sold: 1580,
     category: { vi: "Vật tư", en: "Supplies", ko: "물자" },
-    image: "/placeholder.svg",
+    image: agriculturalLime,
   },
 ];
 
@@ -75,8 +95,8 @@ const produce = [
   {
     id: 5,
     name: { vi: "Lúa ST25 (Gạo ngon nhất thế giới)", en: "ST25 Rice (World's Best Rice)", ko: "ST25 쌀 (세계 최고의 쌀)" },
-    description: { 
-      vi: "Lúa ST25 mùa mới, đã phơi khô, độ ẩm 14%", 
+    description: {
+      vi: "Lúa ST25 mùa mới, đã phơi khô, độ ẩm 14%",
       en: "New season ST25 rice, sun-dried, 14% moisture",
       ko: "새 시즌 ST25 쌀, 건조, 수분 14%"
     },
@@ -91,8 +111,8 @@ const produce = [
   {
     id: 6,
     name: { vi: "Tôm sú loại 1", en: "Grade A Black Tiger Shrimp", ko: "1급 블랙타이거 새우" },
-    description: { 
-      vi: "Tôm sú size 20 con/kg, tươi sống, giao hàng trong ngày", 
+    description: {
+      vi: "Tôm sú size 20 con/kg, tươi sống, giao hàng trong ngày",
       en: "Black tiger shrimp size 20 pcs/kg, live, same-day delivery",
       ko: "블랙타이거 새우 사이즈 20마리/kg, 활어, 당일 배송"
     },
@@ -107,8 +127,8 @@ const produce = [
   {
     id: 7,
     name: { vi: "Sầu riêng Monthong", en: "Monthong Durian", ko: "몬통 두리안" },
-    description: { 
-      vi: "Sầu riêng Monthong chín cây, cơm vàng, hạt lép. Giá sỉ liên hệ", 
+    description: {
+      vi: "Sầu riêng Monthong chín cây, cơm vàng, hạt lép. Giá sỉ liên hệ",
       en: "Tree-ripened Monthong durian, golden flesh, small seeds. Contact for wholesale",
       ko: "나무 숙성 몬통 두리안, 황금색 과육, 작은 씨. 도매 문의"
     },
@@ -123,8 +143,8 @@ const produce = [
   {
     id: 8,
     name: { vi: "Xoài cát Hòa Lộc", en: "Hoa Loc Cat Mango", ko: "호아록 캣 망고" },
-    description: { 
-      vi: "Xoài cát Hòa Lộc loại 1, trái 400-500g, ngọt thơm", 
+    description: {
+      vi: "Xoài cát Hòa Lộc loại 1, trái 400-500g, ngọt thơm",
       en: "Grade 1 Hoa Loc cat mango, 400-500g per fruit, sweet and fragrant",
       ko: "1급 호아록 캣 망고, 개당 400-500g, 달콤하고 향기로움"
     },
@@ -225,8 +245,12 @@ export default function Marketplace() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {filteredSupplies.map((item) => (
                   <Card key={item.id} className="border-2 border-border overflow-hidden hover:shadow-lg hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all">
-                    <div className="relative aspect-square bg-muted flex items-center justify-center">
-                      <Package className="h-16 w-16 text-muted-foreground" />
+                    <div className="relative aspect-square bg-muted">
+                      <img
+                        src={item.image}
+                        alt={getText(item.name)}
+                        className="w-full h-full object-cover"
+                      />
                       <Badge className="absolute top-3 right-3 bg-muted text-muted-foreground border-2 border-border">
                         {getText(item.category)}
                       </Badge>
