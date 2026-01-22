@@ -11,6 +11,10 @@ import salinityMeter from "@/assets/may-do-do-man-dat.jpg";
 import organicFertilizer from "@/assets/phan-bon-huu-co.png";
 import riceSeeds from "@/assets/lua-om18.png";
 import agriculturalLime from "@/assets/voi-nong-nghiep-25kg.jpg";
+import st25Rice from "@/assets/gao-st25.jpeg";
+import tigerShrimp from "@/assets/tom-su-loai-1.jpeg";
+import durian from "@/assets/sau-rieng-monthong.jpeg";
+import mango from "@/assets/xoai-cat-hoa-loc.jpeg";
 
 const supplies = [
   {
@@ -106,7 +110,7 @@ const produce = [
     sold: 5200,
     category: { vi: "Lúa gạo", en: "Rice", ko: "쌀" },
     location: "Sóc Trăng",
-    image: "/placeholder.svg",
+    image: st25Rice,
   },
   {
     id: 6,
@@ -122,7 +126,7 @@ const produce = [
     sold: 890,
     category: { vi: "Thủy sản", en: "Seafood", ko: "해산물" },
     location: "Bạc Liêu",
-    image: "/placeholder.svg",
+    image: tigerShrimp,
   },
   {
     id: 7,
@@ -138,7 +142,7 @@ const produce = [
     sold: 420,
     category: { vi: "Trái cây", en: "Fruits", ko: "과일" },
     location: "Tiền Giang",
-    image: "/placeholder.svg",
+    image: durian,
   },
   {
     id: 8,
@@ -154,7 +158,7 @@ const produce = [
     sold: 1100,
     category: { vi: "Trái cây", en: "Fruits", ko: "과일" },
     location: "Đồng Tháp",
-    image: "/placeholder.svg",
+    image: mango,
   },
 ];
 
@@ -300,8 +304,12 @@ export default function Marketplace() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {filteredProduce.map((item) => (
                   <Card key={item.id} className="border-2 border-border overflow-hidden hover:shadow-lg hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all">
-                    <div className="relative aspect-square bg-muted flex items-center justify-center">
-                      <Shrub className="h-16 w-16 text-muted-foreground" />
+                    <div className="relative aspect-square bg-muted">
+                      <img
+                        src={item.image}
+                        alt={getText(item.name)}
+                        className="w-full h-full object-cover"
+                      />
                       <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground border-2 border-foreground">
                         {item.location}
                       </Badge>
