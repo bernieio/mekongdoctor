@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -6,29 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Droplets, Bot, Store, Heart, AlertTriangle, TrendingUp, MapPin, ThermometerSun } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SalinityMap } from "@/components/SalinityMap";
+import { SalinitySlider } from "@/components/SalinitySlider";
+import { salinityData, SalinityPoint } from "@/data/salinityData";
 import heroImage from "@/assets/hero-mekong.jpg";
 import farmerImage from "@/assets/farmer-checking.jpg";
 
-const salinityAlerts = [
-  { location: "Bến Tre - Bình Đại", level: 5.2 },
-  { location: "Trà Vinh - Cầu Ngang", level: 4.1 },
-  { location: "Sóc Trăng - Mỹ Xuyên", level: 3.5 },
-  { location: "Kiên Giang - An Biên", level: 2.8 },
-];
-
 export default function Index() {
   const { t } = useLanguage();
-
-  const getStatus = (level: number) => {
-    if (level > 7) return "danger";
-    if (level >= 4) return "warning";
-    return "safe";
-  };
-
-  const currentAlerts = salinityAlerts.map(alert => ({
-    ...alert,
-    status: getStatus(alert.level)
-  }));
+  const [selectedPoint, setSelectedPoint] = useState<SalinityPoint | null>(null);
 
   const quickStats = [
     { label: t("stats.farmers"), value: "12,500+", icon: TrendingUp },
@@ -110,58 +96,24 @@ export default function Index() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Salinity Map */}
-            <SalinityMap />
+          <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+            {/* Salinity Map - Takes up more vertical space now */}
+            <div className="lg:col-span-4 h-full">
+              <SalinityMap
+                className="h-full min-h-[400px]"
+                onPointClick={setSelectedPoint}
+                selectedPoint={selectedPoint}
+              />
+            </div>
 
-            {/* Alert Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {currentAlerts.map((alert, index) => (
-                <Card
-                  key={index}
-                  className={`border-2 ${alert.status === 'danger'
-                      ? 'border-destructive'
-                      : alert.status === 'warning'
-                        ? 'border-accent'
-                        : 'border-green-600'
-                    }`}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <p className="font-medium text-sm">{alert.location}</p>
-                        <div className="flex items-center gap-2">
-                          <Droplets className="h-4 w-4 text-muted-foreground" />
-                          <span
-                            className={`text-2xl font-bold ${alert.status === 'danger'
-                                ? 'text-destructive'
-                                : alert.status === 'warning'
-                                  ? 'text-accent'
-                                  : 'text-green-600'
-                              }`}
-                          >
-                            {alert.level}g/L
-                          </span>
-                        </div>
-                      </div>
-                      <Badge
-                        className={`border-2 border-foreground ${alert.status === 'danger'
-                            ? 'bg-destructive text-destructive-foreground'
-                            : alert.status === 'warning'
-                              ? 'bg-accent text-accent-foreground'
-                              : 'bg-green-100 text-green-700 hover:bg-green-100' // Using built-in colors for safe
-                          }`}
-                      >
-                        {
-                          alert.status === 'danger' ? t("alerts.danger") :
-                            alert.status === 'warning' ? t("alerts.warning") :
-                              t("alerts.safe")
-                        }
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            {/* Alert Cards Slider - Takes up remaining space */}
+            <div className="lg:col-span-3">
+              <SalinitySlider
+                data={salinityData}
+                selectedPoint={selectedPoint}
+                onPointSelect={setSelectedPoint}
+                onClearSelection={() => setSelectedPoint(null)}
+              />
             </div>
           </div>
         </div>

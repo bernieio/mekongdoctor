@@ -5,45 +5,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
-
-interface SalinityPoint {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  salinity: number;
-  status: "safe" | "warning" | "danger";
-  updatedAt: string;
-}
-
-// Sample salinity data points in Mekong Delta
-const sampleData: SalinityPoint[] = [
-  { id: "1", name: "Cửa Tiểu", lat: 10.2167, lng: 106.7333, salinity: 8.5, status: "danger", updatedAt: "2024-01-20T08:00:00Z" },
-  { id: "2", name: "Cửa Đại", lat: 10.2500, lng: 106.6833, salinity: 6.2, status: "warning", updatedAt: "2024-01-20T08:00:00Z" },
-  { id: "3", name: "Bến Tre", lat: 10.2417, lng: 106.3750, salinity: 4.1, status: "warning", updatedAt: "2024-01-20T08:00:00Z" },
-  { id: "4", name: "Trà Vinh", lat: 9.9347, lng: 106.3422, salinity: 2.8, status: "safe", updatedAt: "2024-01-20T08:00:00Z" },
-  { id: "5", name: "Sóc Trăng", lat: 9.6033, lng: 105.9800, salinity: 5.5, status: "warning", updatedAt: "2024-01-20T08:00:00Z" },
-  { id: "6", name: "Bạc Liêu", lat: 9.2833, lng: 105.7167, salinity: 7.8, status: "danger", updatedAt: "2024-01-20T08:00:00Z" },
-  { id: "7", name: "Cà Mau", lat: 9.1769, lng: 105.1500, salinity: 9.2, status: "danger", updatedAt: "2024-01-20T08:00:00Z" },
-  { id: "8", name: "Kiên Giang", lat: 10.0125, lng: 105.0809, salinity: 3.5, status: "safe", updatedAt: "2024-01-20T08:00:00Z" },
-  { id: "9", name: "Hậu Giang", lat: 9.7578, lng: 105.6414, salinity: 1.8, status: "safe", updatedAt: "2024-01-20T08:00:00Z" },
-  { id: "10", name: "Vĩnh Long", lat: 10.2539, lng: 105.9722, salinity: 2.2, status: "safe", updatedAt: "2024-01-20T08:00:00Z" },
-];
+import { SalinityPoint, salinityData } from "@/data/salinityData";
 
 interface SalinityMapProps {
   className?: string;
   onPointClick?: (point: SalinityPoint) => void;
+  selectedPoint?: SalinityPoint | null;
 }
 
-export function SalinityMap({ className, onPointClick }: SalinityMapProps) {
+export function SalinityMap({ className, onPointClick, selectedPoint }: SalinityMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
   const [mapToken, setMapToken] = useState<string | null>(null);
-  const [selectedPoint, setSelectedPoint] = useState<SalinityPoint | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useLanguage();
 
-  // Fetch Mapbox token from edge function
+  // Fetch Mapbox token
   useEffect(() => {
     const fetchToken = async () => {
       try {
@@ -72,35 +50,26 @@ export function SalinityMap({ className, onPointClick }: SalinityMapProps) {
       style: "mapbox://styles/mapbox/outdoors-v12",
       center: [105.8, 10.0], // Center on Mekong Delta
       zoom: 7,
+      cooperativeGestures: true // Better for scrollable pages
     });
 
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-    // Add markers for each salinity point
-    sampleData.forEach((point) => {
-      const markerColor = 
-        point.status === "danger" ? "#ef4444" :
-        point.status === "warning" ? "#f59e0b" :
-        "#22c55e";
-
+    // Add markers
+    salinityData.forEach((point) => {
       const el = document.createElement("div");
       el.className = "salinity-marker";
-      el.style.cssText = `
-        width: 24px;
-        height: 24px;
-        background-color: ${markerColor};
-        border: 3px solid white;
-        border-radius: 50%;
-        cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      `;
+      updateMarkerStyle(el, point.status, false);
 
       const marker = new mapboxgl.Marker(el)
         .setLngLat([point.lng, point.lat])
         .addTo(map.current!);
 
+      // Save marker ref
+      markersRef.current[point.id] = marker;
+
+      // Click event
       el.addEventListener("click", () => {
-        setSelectedPoint(point);
         onPointClick?.(point);
       });
     });
@@ -111,21 +80,57 @@ export function SalinityMap({ className, onPointClick }: SalinityMapProps) {
     };
   }, [mapToken, onPointClick]);
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "danger": return t("diagnosis.result.danger");
-      case "warning": return t("diagnosis.result.warning");
-      default: return t("diagnosis.result.safe");
-    }
-  };
+  // Handle expected selection changes (Focus & Highlight)
+  useEffect(() => {
+    if (!map.current) return;
 
-  const getStatusVariant = (status: string): "destructive" | "secondary" | "default" => {
-    switch (status) {
-      case "danger": return "destructive";
-      case "warning": return "secondary";
-      default: return "default";
+    // Reset all markers styles
+    salinityData.forEach(point => {
+      const marker = markersRef.current[point.id];
+      if (marker) {
+        const el = marker.getElement();
+        updateMarkerStyle(el, point.status, point.id === selectedPoint?.id);
+      }
+    });
+
+    if (selectedPoint) {
+      // Fly to location
+      map.current.flyTo({
+        center: [selectedPoint.lng, selectedPoint.lat],
+        zoom: 9,
+        essential: true,
+        speed: 1.5
+      });
+    } else {
+      // Optional: Reset view if selection cleared? 
+      // User didn't explicitly ask for this, but it might be nice. 
+      // Keeping it simple for now (no auto reset-view) as user might just want to browse slider.
     }
-  };
+
+  }, [selectedPoint]);
+
+  const updateMarkerStyle = (el: HTMLElement, status: string, isSelected: boolean) => {
+    const color =
+      status === "danger" ? "#ef4444" :
+        status === "warning" ? "#f59e0b" :
+          "#22c55e"; // green-500
+
+    const size = isSelected ? "32px" : "24px";
+    const zIndex = isSelected ? "10" : "1";
+    const border = isSelected ? "4px solid white" : "3px solid white";
+
+    el.style.cssText = `
+        width: ${size};
+        height: ${size};
+        background-color: ${color};
+        border: ${border};
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        z-index: ${zIndex};
+      `;
+  }
 
   if (isLoading) {
     return (
@@ -157,7 +162,7 @@ export function SalinityMap({ className, onPointClick }: SalinityMapProps) {
       </CardHeader>
       <CardContent className="p-0 relative">
         <div ref={mapContainer} className="h-[400px] w-full" />
-        
+
         {/* Legend */}
         <div className="absolute bottom-4 left-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border-2 shadow-lg">
           <p className="text-xs font-medium mb-2">{t("map.legend")}</p>
@@ -176,23 +181,6 @@ export function SalinityMap({ className, onPointClick }: SalinityMapProps) {
             </div>
           </div>
         </div>
-
-        {/* Selected Point Info */}
-        {selectedPoint && (
-          <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border-2 shadow-lg max-w-[200px]">
-            <button 
-              onClick={() => setSelectedPoint(null)}
-              className="absolute top-1 right-2 text-muted-foreground hover:text-foreground"
-            >
-              ×
-            </button>
-            <p className="font-medium text-sm">{selectedPoint.name}</p>
-            <p className="text-2xl font-bold mt-1">{selectedPoint.salinity} g/L</p>
-            <Badge variant={getStatusVariant(selectedPoint.status)} className="mt-2">
-              {getStatusLabel(selectedPoint.status)}
-            </Badge>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
