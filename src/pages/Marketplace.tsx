@@ -10,7 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import salinityMeter from "@/assets/may-do-do-man-dat.jpg";
 import organicFertilizer from "@/assets/phan-bon-huu-co.png";
 import riceSeeds from "@/assets/lua-om18.png";
-import agriculturalLime from "@/assets/voi-nong-nghiep-25kg.webp";
+import agriculturalLime from "@/assets/voi-nong-nghiep-25kg.jpg";
 
 const supplies = [
   {
