@@ -165,7 +165,7 @@ const produce = [
 export default function Marketplace() {
   const { t, language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("supplies");
+  const [activeTab, setActiveTab] = useState("produce");
 
   const getText = (obj: { vi: string; en: string; ko: string }) => {
     return obj[language] || obj.vi;
@@ -229,70 +229,15 @@ export default function Marketplace() {
         <div className="container">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
             <TabsList className="grid grid-cols-2 w-full max-w-md h-auto p-1 border-2 border-border">
-              <TabsTrigger value="supplies" className="flex items-center gap-2 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Package className="h-5 w-5" />
-                <span>{t("marketplace.supplies")}</span>
-              </TabsTrigger>
               <TabsTrigger value="produce" className="flex items-center gap-2 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <Wheat className="h-5 w-5" />
                 <span>{t("marketplace.produce")}</span>
               </TabsTrigger>
+              <TabsTrigger value="supplies" className="flex items-center gap-2 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Package className="h-5 w-5" />
+                <span>{t("marketplace.supplies")}</span>
+              </TabsTrigger>
             </TabsList>
-
-            {/* Supplies Tab */}
-            <TabsContent value="supplies">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-2">{t("marketplace.supplies.title")}</h2>
-                <p className="text-muted-foreground">{t("marketplace.supplies.description")}</p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                {filteredSupplies.map((item) => (
-                  <Card key={item.id} className="border-2 border-border overflow-hidden hover:shadow-lg hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all">
-                    <div className="relative aspect-square bg-muted">
-                      <img
-                        src={item.image}
-                        alt={getText(item.name)}
-                        className="w-full h-full object-cover"
-                      />
-                      <Badge className="absolute top-3 right-3 bg-muted text-muted-foreground border-2 border-border">
-                        {getText(item.category)}
-                      </Badge>
-                    </div>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg line-clamp-1">{getText(item.name)}</CardTitle>
-                      <CardDescription className="line-clamp-2">
-                        {getText(item.description)}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-secondary text-secondary" />
-                          <span className="text-sm font-medium">{item.rating}</span>
-                        </div>
-                        <span className="text-sm text-muted-foreground">
-                          | {t("marketplace.sold")} {item.sold}
-                        </span>
-                      </div>
-                      <p className="text-2xl font-bold text-primary">
-                        {formatPrice(item.price)}
-                        <span className="text-sm font-normal text-muted-foreground">/{getText(item.unit)}</span>
-                      </p>
-                    </CardContent>
-                    <CardFooter className="gap-2">
-                      <Button className="flex-1 border-2 border-foreground" size="sm">
-                        <ShoppingCart className="mr-2 h-4 w-4" />
-                        {t("marketplace.buy")}
-                      </Button>
-                      <Button variant="outline" size="sm" className="border-2">
-                        <Phone className="h-4 w-4" />
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
 
             {/* Produce Tab */}
             <TabsContent value="produce">
@@ -342,6 +287,61 @@ export default function Marketplace() {
                       <Button className="flex-1 border-2 border-foreground" size="sm">
                         <ShoppingCart className="mr-2 h-4 w-4" />
                         {t("marketplace.order")}
+                      </Button>
+                      <Button variant="outline" size="sm" className="border-2">
+                        <Phone className="h-4 w-4" />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* Supplies Tab */}
+            <TabsContent value="supplies">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold mb-2">{t("marketplace.supplies.title")}</h2>
+                <p className="text-muted-foreground">{t("marketplace.supplies.description")}</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                {filteredSupplies.map((item) => (
+                  <Card key={item.id} className="border-2 border-border overflow-hidden hover:shadow-lg hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all">
+                    <div className="relative aspect-square bg-muted">
+                      <img
+                        src={item.image}
+                        alt={getText(item.name)}
+                        className="w-full h-full object-cover"
+                      />
+                      <Badge className="absolute top-3 right-3 bg-muted text-muted-foreground border-2 border-border">
+                        {getText(item.category)}
+                      </Badge>
+                    </div>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg line-clamp-1">{getText(item.name)}</CardTitle>
+                      <CardDescription className="line-clamp-2">
+                        {getText(item.description)}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-secondary text-secondary" />
+                          <span className="text-sm font-medium">{item.rating}</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                          | {t("marketplace.sold")} {item.sold}
+                        </span>
+                      </div>
+                      <p className="text-2xl font-bold text-primary">
+                        {formatPrice(item.price)}
+                        <span className="text-sm font-normal text-muted-foreground">/{getText(item.unit)}</span>
+                      </p>
+                    </CardContent>
+                    <CardFooter className="gap-2">
+                      <Button className="flex-1 border-2 border-foreground" size="sm">
+                        <ShoppingCart className="mr-2 h-4 w-4" />
+                        {t("marketplace.buy")}
                       </Button>
                       <Button variant="outline" size="sm" className="border-2">
                         <Phone className="h-4 w-4" />
