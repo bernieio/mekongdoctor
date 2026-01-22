@@ -10,14 +10,25 @@ import heroImage from "@/assets/hero-mekong.jpg";
 import farmerImage from "@/assets/farmer-checking.jpg";
 
 const salinityAlerts = [
-  { location: "Bến Tre - Bình Đại", level: 5.2, status: "danger" },
-  { location: "Trà Vinh - Cầu Ngang", level: 4.1, status: "danger" },
-  { location: "Sóc Trăng - Mỹ Xuyên", level: 3.5, status: "warning" },
-  { location: "Kiên Giang - An Biên", level: 2.8, status: "warning" },
+  { location: "Bến Tre - Bình Đại", level: 5.2 },
+  { location: "Trà Vinh - Cầu Ngang", level: 4.1 },
+  { location: "Sóc Trăng - Mỹ Xuyên", level: 3.5 },
+  { location: "Kiên Giang - An Biên", level: 2.8 },
 ];
 
 export default function Index() {
   const { t } = useLanguage();
+
+  const getStatus = (level: number) => {
+    if (level > 7) return "danger";
+    if (level >= 4) return "warning";
+    return "safe";
+  };
+
+  const currentAlerts = salinityAlerts.map(alert => ({
+    ...alert,
+    status: getStatus(alert.level)
+  }));
 
   const quickStats = [
     { label: t("stats.farmers"), value: "12,500+", icon: TrendingUp },
@@ -35,7 +46,7 @@ export default function Index() {
         >
           <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
         </div>
-        
+
         <div className="container relative z-10 py-12 md:py-20">
           <div className="max-w-2xl space-y-6">
             <Badge className="bg-secondary text-secondary-foreground border-2 border-foreground px-4 py-1">
@@ -105,24 +116,47 @@ export default function Index() {
 
             {/* Alert Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {salinityAlerts.map((alert, index) => (
-                <Card key={index} className={`border-2 ${alert.status === 'danger' ? 'border-destructive' : 'border-accent'}`}>
+              {currentAlerts.map((alert, index) => (
+                <Card
+                  key={index}
+                  className={`border-2 ${alert.status === 'danger'
+                      ? 'border-destructive'
+                      : alert.status === 'warning'
+                        ? 'border-accent'
+                        : 'border-green-600'
+                    }`}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
                         <p className="font-medium text-sm">{alert.location}</p>
                         <div className="flex items-center gap-2">
                           <Droplets className="h-4 w-4 text-muted-foreground" />
-                          <span className={`text-2xl font-bold ${alert.status === 'danger' ? 'text-destructive' : 'text-accent'}`}>
+                          <span
+                            className={`text-2xl font-bold ${alert.status === 'danger'
+                                ? 'text-destructive'
+                                : alert.status === 'warning'
+                                  ? 'text-accent'
+                                  : 'text-green-600'
+                              }`}
+                          >
                             {alert.level}g/L
                           </span>
                         </div>
                       </div>
-                      <Badge 
-                        variant={alert.status === 'danger' ? 'destructive' : 'secondary'}
-                        className="border-2 border-foreground"
+                      <Badge
+                        className={`border-2 border-foreground ${alert.status === 'danger'
+                            ? 'bg-destructive text-destructive-foreground'
+                            : alert.status === 'warning'
+                              ? 'bg-accent text-accent-foreground'
+                              : 'bg-green-100 text-green-700 hover:bg-green-100' // Using built-in colors for safe
+                          }`}
                       >
-                        {alert.status === 'danger' ? t("alerts.danger") : t("alerts.warning")}
+                        {
+                          alert.status === 'danger' ? t("alerts.danger") :
+                            alert.status === 'warning' ? t("alerts.warning") :
+                              t("alerts.safe")
+                        }
                       </Badge>
                     </div>
                   </CardContent>

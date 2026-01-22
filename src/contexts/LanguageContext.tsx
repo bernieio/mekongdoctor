@@ -21,7 +21,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.community": "Cộng đồng",
     "nav.marketplace": "Chợ Nông sản",
     "nav.login": "Đăng nhập",
-    
+
     // Hero Section
     "hero.badge": "🌾 Nền tảng Nông nghiệp Thông minh",
     "hero.title": "Bác sĩ Mekong",
@@ -29,19 +29,20 @@ export const translations: Record<Language, Record<string, string>> = {
     "hero.description": "Giúp nông dân ĐBSCL ứng phó với xâm nhập mặn, kết nối chuyên gia AI, tiếp cận chính sách hỗ trợ và thương mại hóa nông sản.",
     "hero.cta.diagnosis": "Hỏi Bác sĩ AI",
     "hero.cta.taccau": "Khóm Tắc Cậu",
-    
+
     // Stats
     "stats.farmers": "Nông dân đang sử dụng",
     "stats.diagnosis": "Lượt chẩn đoán AI",
     "stats.provinces": "Tỉnh/Thành phủ sóng",
-    
+
     // Salinity Alerts
     "alerts.title": "Cảnh báo Độ mặn",
     "alerts.subtitle": "Cập nhật theo thời gian thực",
     "alerts.danger": "Nguy hiểm",
     "alerts.warning": "Cảnh báo",
+    "alerts.safe": "An toàn",
     "alerts.high": "Cảnh báo độ mặn cao!",
-    
+
     // Features
     "features.title": "Tính năng Chính",
     "features.description": "Mekong Doctor cung cấp giải pháp toàn diện giúp nông dân ĐBSCL ứng phó với biến đổi khí hậu",
@@ -53,12 +54,12 @@ export const translations: Record<Language, Record<string, string>> = {
     "features.community.description": "Học bổng, vay vốn 0% và kết nối đầu tư",
     "features.marketplace.title": "Chợ Nông sản",
     "features.marketplace.description": "Mua vật tư, bán sản phẩm, kết nối chuỗi cung ứng",
-    
+
     // CTA Section
     "cta.title": "Bắt đầu Chẩn đoán Ngay",
     "cta.description": "Chỉ cần nhập vị trí và chỉ số độ mặn, Bác sĩ AI của chúng tôi sẽ phân tích và đưa ra giải pháp phù hợp cho loại cây trồng của bạn.",
     "cta.button": "Đo độ mặn ngay",
-    
+
     // Diagnosis Page
     "diagnosis.title": "Bác sĩ Mekong AI",
     "diagnosis.subtitle": "Chẩn đoán tình trạng xâm nhập mặn và đề xuất giải pháp",
@@ -85,7 +86,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "diagnosis.tips.2": "• Đo ở nhiều điểm trong ruộng/ao và lấy giá trị trung bình",
     "diagnosis.tips.3": "• Tránh đo sau khi mưa lớn hoặc xả nước",
     "diagnosis.tips.4": "• Kiểm tra định kỳ 2-3 lần/tuần trong mùa khô",
-    
+
     // Marketplace
     "marketplace.title": "Chợ Nông sản Mekong",
     "marketplace.subtitle": "Mua vật tư - Bán nông sản - Kết nối chuỗi cung ứng",
@@ -103,7 +104,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "marketplace.seller.title": "Bạn muốn bán nông sản?",
     "marketplace.seller.description": "Đăng ký trở thành người bán để tiếp cận hàng ngàn khách hàng trên toàn quốc",
     "marketplace.seller.register": "Đăng ký bán hàng",
-    
+
     // TacCau Page
     "taccau.badge": "🍍 Đặc sản Kiên Giang",
     "taccau.title": "Khóm Tắc Cậu",
@@ -125,7 +126,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "taccau.cta.title": "Bạn là nông dân trồng Khóm?",
     "taccau.cta.description": "Đăng ký trở thành đối tác của Mekong Doctor để tiếp cận khách hàng trên toàn quốc. Chúng tôi hỗ trợ vận chuyển, marketing và đảm bảo giá tốt nhất cho bạn.",
     "taccau.cta.register": "Đăng ký bán hàng",
-    
+
     // Community Page
     "community.title": "Giving to Mekong Community",
     "community.subtitle": "Cùng chung tay xây dựng cộng đồng nông nghiệp bền vững",
@@ -145,12 +146,12 @@ export const translations: Record<Language, Record<string, string>> = {
     "community.form.register": "Gửi đăng ký",
     "community.form.success": "Đã gửi hồ sơ thành công!",
     "community.form.success.description": "Chúng tôi sẽ xem xét và liên hệ với bạn trong 3-5 ngày làm việc.",
-    
+
     // Common
     "common.select": "Chọn",
     "common.enter": "Nhập",
     "common.threshold": "ngưỡng",
-    
+
     // Auth
     "auth.signIn": "Đăng nhập",
     "auth.signUp": "Đăng ký",
@@ -161,7 +162,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "auth.hasAccount": "Đã có tài khoản?",
     "nav.profile": "Hồ sơ",
     "nav.settings": "Cài đặt",
-    
+
     // Profile
     "profile.details": "Thông tin cá nhân",
     "profile.detailsDescription": "Quản lý thông tin hồ sơ của bạn",
@@ -188,7 +189,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "map.unavailable": "Bản đồ tạm thời không khả dụng",
     "map.realtime": "Thời gian thực",
     "map.legend": "Chú thích độ mặn",
-    
+
     // Admin
     "admin.dashboard": "Bảng điều khiển Admin",
     "admin.dashboardDescription": "Quản lý người dùng và xem thống kê hệ thống",
@@ -217,7 +218,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.activityComingSoon": "Tính năng đang phát triển",
     "admin.accessDenied": "Từ chối truy cập",
     "admin.accessDeniedDescription": "Bạn không có quyền truy cập trang này",
-    
+
     // AI Response Language
     "ai.language": "tiếng Việt",
   },
@@ -230,7 +231,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.community": "Community",
     "nav.marketplace": "Marketplace",
     "nav.login": "Login",
-    
+
     // Hero Section
     "hero.badge": "🌾 Smart Agriculture Platform",
     "hero.title": "Mekong Doctor",
@@ -238,19 +239,20 @@ export const translations: Record<Language, Record<string, string>> = {
     "hero.description": "Helping Mekong Delta farmers cope with saline intrusion, connect with AI experts, access support policies and commercialize agricultural products.",
     "hero.cta.diagnosis": "Ask AI Doctor",
     "hero.cta.taccau": "Tac Cau Pineapple",
-    
+
     // Stats
     "stats.farmers": "Active Farmers",
     "stats.diagnosis": "AI Diagnoses",
     "stats.provinces": "Provinces Covered",
-    
+
     // Salinity Alerts
     "alerts.title": "Salinity Alerts",
     "alerts.subtitle": "Real-time updates",
     "alerts.danger": "Danger",
     "alerts.warning": "Warning",
+    "alerts.safe": "Safe",
     "alerts.high": "High Salinity Alert!",
-    
+
     // Features
     "features.title": "Key Features",
     "features.description": "Mekong Doctor provides comprehensive solutions to help Mekong Delta farmers cope with climate change",
@@ -262,12 +264,12 @@ export const translations: Record<Language, Record<string, string>> = {
     "features.community.description": "Scholarships, 0% interest loans and investment connections",
     "features.marketplace.title": "Tac Cau Marketplace",
     "features.marketplace.description": "Buy supplies, sell products, connect supply chain",
-    
+
     // CTA Section
     "cta.title": "Start Diagnosis Now",
     "cta.description": "Just enter your location and salinity level, our AI Doctor will analyze and provide suitable solutions for your crop type.",
     "cta.button": "Measure Salinity Now",
-    
+
     // Diagnosis Page
     "diagnosis.title": "Mekong AI Doctor",
     "diagnosis.subtitle": "Diagnose saline intrusion conditions and recommend solutions",
@@ -294,7 +296,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "diagnosis.tips.2": "• Measure at multiple points in the field/pond and take average",
     "diagnosis.tips.3": "• Avoid measuring after heavy rain or water drainage",
     "diagnosis.tips.4": "• Check regularly 2-3 times/week during dry season",
-    
+
     // Marketplace
     "marketplace.title": "Mekong Agricultural Market",
     "marketplace.subtitle": "Buy supplies - Sell produce - Connect supply chain",
@@ -312,7 +314,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "marketplace.seller.title": "Want to sell your products?",
     "marketplace.seller.description": "Register as a seller to reach thousands of customers nationwide",
     "marketplace.seller.register": "Register to Sell",
-    
+
     // TacCau Page
     "taccau.badge": "🍍 Kien Giang Specialty",
     "taccau.title": "Tac Cau Pineapple",
@@ -334,7 +336,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "taccau.cta.title": "Are you a pineapple farmer?",
     "taccau.cta.description": "Register as a Mekong Doctor partner to reach customers nationwide. We support shipping, marketing and ensure the best prices for you.",
     "taccau.cta.register": "Register to Sell",
-    
+
     // Community Page
     "community.title": "Giving to Mekong Community",
     "community.subtitle": "Together building a sustainable agricultural community",
@@ -354,12 +356,12 @@ export const translations: Record<Language, Record<string, string>> = {
     "community.form.register": "Submit Registration",
     "community.form.success": "Application submitted successfully!",
     "community.form.success.description": "We will review and contact you within 3-5 business days.",
-    
+
     // Common
     "common.select": "Select",
     "common.enter": "Enter",
     "common.threshold": "threshold",
-    
+
     // Auth
     "auth.signIn": "Sign In",
     "auth.signUp": "Sign Up",
@@ -370,7 +372,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "auth.hasAccount": "Already have an account?",
     "nav.profile": "Profile",
     "nav.settings": "Settings",
-    
+
     // Profile
     "profile.details": "Profile Details",
     "profile.detailsDescription": "Manage your profile information",
@@ -397,7 +399,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "map.unavailable": "Map temporarily unavailable",
     "map.realtime": "Real-time",
     "map.legend": "Salinity Legend",
-    
+
     // Admin
     "admin.dashboard": "Admin Dashboard",
     "admin.dashboardDescription": "Manage users and view system statistics",
@@ -426,7 +428,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.activityComingSoon": "Feature coming soon",
     "admin.accessDenied": "Access Denied",
     "admin.accessDeniedDescription": "You do not have permission to access this page",
-    
+
     // AI Response Language
     "ai.language": "English",
   },
@@ -439,7 +441,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.community": "커뮤니티",
     "nav.marketplace": "탁카우 장터",
     "nav.login": "로그인",
-    
+
     // Hero Section
     "hero.badge": "🌾 스마트 농업 플랫폼",
     "hero.title": "메콩 닥터",
@@ -447,19 +449,20 @@ export const translations: Record<Language, Record<string, string>> = {
     "hero.description": "메콩 삼각주 농민들이 염분 침입에 대처하고, AI 전문가와 연결하며, 지원 정책에 접근하고 농산물을 상업화할 수 있도록 돕습니다.",
     "hero.cta.diagnosis": "AI 진단 받기",
     "hero.cta.taccau": "탁카우 파인애플",
-    
+
     // Stats
     "stats.farmers": "활성 농민",
     "stats.diagnosis": "AI 진단 횟수",
     "stats.provinces": "서비스 지역",
-    
+
     // Salinity Alerts
     "alerts.title": "염도 경고",
     "alerts.subtitle": "실시간 업데이트",
     "alerts.danger": "위험",
     "alerts.warning": "경고",
+    "alerts.safe": "안전",
     "alerts.high": "높은 염도 경고!",
-    
+
     // Features
     "features.title": "주요 기능",
     "features.description": "메콩 닥터는 메콩 삼각주 농민들이 기후 변화에 대처할 수 있도록 종합적인 솔루션을 제공합니다",
@@ -471,12 +474,12 @@ export const translations: Record<Language, Record<string, string>> = {
     "features.community.description": "장학금, 무이자 대출 및 투자 연결",
     "features.marketplace.title": "탁카우 장터",
     "features.marketplace.description": "물자 구매, 제품 판매, 공급망 연결",
-    
+
     // CTA Section
     "cta.title": "지금 진단 시작하기",
     "cta.description": "위치와 염도 수치만 입력하면, AI 닥터가 작물 유형에 적합한 해결책을 분석하고 제공합니다.",
     "cta.button": "염도 측정하기",
-    
+
     // Diagnosis Page
     "diagnosis.title": "메콩 AI 닥터",
     "diagnosis.subtitle": "염분 침입 상태를 진단하고 해결책을 제안합니다",
@@ -503,7 +506,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "diagnosis.tips.2": "• 논/연못의 여러 지점에서 측정하고 평균을 내세요",
     "diagnosis.tips.3": "• 폭우 후나 배수 후에는 측정을 피하세요",
     "diagnosis.tips.4": "• 건기에는 주 2-3회 정기적으로 확인하세요",
-    
+
     // Marketplace
     "marketplace.title": "메콩 농산물 시장",
     "marketplace.subtitle": "물자 구매 - 농산물 판매 - 공급망 연결",
@@ -521,7 +524,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "marketplace.seller.title": "농산물을 판매하시겠습니까?",
     "marketplace.seller.description": "판매자로 등록하여 전국의 수천 명의 고객에게 다가가세요",
     "marketplace.seller.register": "판매 등록",
-    
+
     // TacCau Page
     "taccau.badge": "🍍 끼엔장 특산품",
     "taccau.title": "탁카우 파인애플",
@@ -543,7 +546,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "taccau.cta.title": "파인애플 농민이신가요?",
     "taccau.cta.description": "메콩 닥터의 파트너로 등록하여 전국의 고객에게 다가가세요. 배송, 마케팅을 지원하고 최고의 가격을 보장합니다.",
     "taccau.cta.register": "판매 등록",
-    
+
     // Community Page
     "community.title": "메콩 커뮤니티 기부",
     "community.subtitle": "지속 가능한 농업 커뮤니티 구축에 함께합니다",
@@ -563,12 +566,12 @@ export const translations: Record<Language, Record<string, string>> = {
     "community.form.register": "등록 제출",
     "community.form.success": "신청서가 성공적으로 제출되었습니다!",
     "community.form.success.description": "3-5 영업일 내에 검토 후 연락드리겠습니다.",
-    
+
     // Common
     "common.select": "선택",
     "common.enter": "입력",
     "common.threshold": "임계값",
-    
+
     // Auth
     "auth.signIn": "로그인",
     "auth.signUp": "회원가입",
@@ -579,7 +582,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "auth.hasAccount": "이미 계정이 있으신가요?",
     "nav.profile": "프로필",
     "nav.settings": "설정",
-    
+
     // Profile
     "profile.details": "프로필 정보",
     "profile.detailsDescription": "프로필 정보 관리",
@@ -606,7 +609,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "map.unavailable": "지도를 일시적으로 사용할 수 없습니다",
     "map.realtime": "실시간",
     "map.legend": "염도 범례",
-    
+
     // Admin
     "admin.dashboard": "관리자 대시보드",
     "admin.dashboardDescription": "사용자 관리 및 시스템 통계 보기",
@@ -635,7 +638,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.activityComingSoon": "기능 개발 중",
     "admin.accessDenied": "접근 거부",
     "admin.accessDeniedDescription": "이 페이지에 접근할 권한이 없습니다",
-    
+
     // AI Response Language
     "ai.language": "Korean",
   },
