@@ -10,6 +10,7 @@ import { GraduationCap, Wallet, Handshake, Heart, Users, CheckCircle, Send, Load
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import backgroundImage from "@/assets/cong-dong-background.jpeg";
 
 interface ScholarshipForm {
   fullName: string;
@@ -157,8 +158,12 @@ export default function Community() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="bg-primary py-12">
-        <div className="container">
+      <section
+        className="relative bg-cover bg-center py-20"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="container relative z-10">
           <div className="flex items-center gap-4 mb-6">
             <div className="flex h-16 w-16 items-center justify-center border-2 border-secondary bg-secondary">
               <Heart className="h-8 w-8 text-secondary-foreground" />

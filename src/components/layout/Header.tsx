@@ -51,6 +51,9 @@ export default function Header() {
             <NavLink to="/sokfarm" onClick={() => setIsOpen(false)}>Sokfarm</NavLink>
             <NavLink to="/marketplace" onClick={() => setIsOpen(false)}>{t("nav.marketplace")}</NavLink>
             <NavLink to="/community" onClick={() => setIsOpen(false)}>{t("nav.community")}</NavLink>
+            <div className="pt-4 border-t">
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       )}

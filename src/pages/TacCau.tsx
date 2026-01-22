@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Phone, Star, Truck, Shield, Award } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import backgroundImage from "@/assets/khom-tac-cau-background.jpeg";
 import pineappleImage from "@/assets/pineapple-taccau.jpg";
 import banhKhomImage from "@/assets/banh-khom-taccau.jpg";
 import mutKhomImage from "@/assets/mut-khom-taccau.jpg";
@@ -13,8 +14,8 @@ const products = [
   {
     id: 1,
     name: { vi: "Khóm Tắc Cậu tươi", en: "Fresh Tac Cau Pineapple", ko: "신선한 탁카우 파인애플" },
-    description: { 
-      vi: "Khóm tươi nguyên trái, thu hoạch trong ngày. Ngọt thanh, ít chua, thơm đặc trưng.", 
+    description: {
+      vi: "Khóm tươi nguyên trái, thu hoạch trong ngày. Ngọt thanh, ít chua, thơm đặc trưng.",
       en: "Fresh whole pineapple, harvested same day. Mildly sweet, less sour, distinctive fragrance.",
       ko: "신선한 통 파인애플, 당일 수확. 부드러운 단맛, 적은 신맛, 독특한 향기."
     },
@@ -28,8 +29,8 @@ const products = [
   {
     id: 2,
     name: { vi: "Bánh khóm Tắc Cậu", en: "Tac Cau Pineapple Cake", ko: "탁카우 파인애플 케이크" },
-    description: { 
-      vi: "Bánh khóm truyền thống, nhân khóm tươi, vỏ bánh giòn tan. Hộp 12 cái.", 
+    description: {
+      vi: "Bánh khóm truyền thống, nhân khóm tươi, vỏ bánh giòn tan. Hộp 12 cái.",
       en: "Traditional pineapple cake, fresh pineapple filling, crispy crust. Box of 12.",
       ko: "전통 파인애플 케이크, 신선한 파인애플 속, 바삭한 껍질. 12개입."
     },
@@ -43,8 +44,8 @@ const products = [
   {
     id: 3,
     name: { vi: "Mứt khóm Tắc Cậu", en: "Tac Cau Pineapple Jam", ko: "탁카우 파인애플 잼" },
-    description: { 
-      vi: "Mứt khóm thủ công, nguyên liệu 100% khóm tươi, không chất bảo quản.", 
+    description: {
+      vi: "Mứt khóm thủ công, nguyên liệu 100% khóm tươi, không chất bảo quản.",
       en: "Handmade pineapple jam, 100% fresh pineapple, no preservatives.",
       ko: "수제 파인애플 잼, 100% 신선한 파인애플, 방부제 무첨가."
     },
@@ -58,8 +59,8 @@ const products = [
   {
     id: 4,
     name: { vi: "Nước ép khóm", en: "Pineapple Juice", ko: "파인애플 주스" },
-    description: { 
-      vi: "Nước ép khóm nguyên chất, đóng chai thủy tinh. Thùng 6 chai.", 
+    description: {
+      vi: "Nước ép khóm nguyên chất, đóng chai thủy tinh. Thùng 6 chai.",
       en: "Pure pineapple juice, glass bottled. Box of 6 bottles.",
       ko: "순수 파인애플 주스, 유리병. 6병입."
     },
@@ -108,16 +109,20 @@ export default function TacCau() {
   return (
     <Layout>
       {/* Hero Banner */}
-      <section className="relative bg-secondary py-12">
-        <div className="container">
-          <div className="text-center mb-8">
-            <Badge className="bg-primary text-primary-foreground border-2 border-foreground mb-4">
+      <section
+        className="relative bg-cover bg-center py-20"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="container relative z-10">
+          <div className="text-center mb-8 text-white">
+            <Badge className="bg-primary text-primary-foreground border-2 border-white mb-4">
               {t("taccau.badge")}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               {t("taccau.title")}
             </h1>
-            <p className="text-xl text-secondary-foreground/80">
+            <p className="text-xl text-white/90">
               {t("taccau.subtitle")}
             </p>
           </div>
