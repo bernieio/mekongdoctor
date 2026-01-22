@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,6 +49,8 @@ export default function Diagnosis() {
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [result, setResult] = useState<DiagnosisResult | null>(null);
+  const [originalLanguage, setOriginalLanguage] = useState<string | null>(null);
+  const [isTranslating, setIsTranslating] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<{ file: File; preview: string }[]>([]);
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
 
@@ -117,6 +119,74 @@ export default function Diagnosis() {
     return urls;
   };
 
+  // Auto-translate result when language changes
+  useEffect(() => {
+    const translateResult = async () => {
+      // Only translate if we have a result and language has changed
+      if (!result || !originalLanguage || language === originalLanguage || isTranslating) {
+        return;
+      }
+
+      console.log(`Language changed from ${originalLanguage} to ${language}, translating...`);
+      setIsTranslating(true);
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/translate-diagnosis`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": import.meta.env.VITE_SUPABASE_ANON_KEY,
+            },
+            body: JSON.stringify({
+              originalResult: result,
+              targetLanguage: language,
+              sourceLanguage: originalLanguage,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Translation failed");
+        }
+
+        const translatedResult = await response.json();
+
+        // Check if translation was successful
+        if (translatedResult.error) {
+          console.warn("Translation error, keeping original:", translatedResult.error);
+          if (translatedResult.fallback) {
+            setResult(translatedResult.fallback);
+          }
+        } else {
+          setResult(translatedResult);
+          setOriginalLanguage(language);
+          toast.success(
+            language === "vi"
+              ? "Đã dịch kết quả sang tiếng Việt"
+              : language === "en"
+                ? "Result translated to English"
+                : "결과가 한국어로 번역되었습니다"
+          );
+        }
+      } catch (error) {
+        console.error("Translation error:", error);
+        toast.error(
+          language === "vi"
+            ? "Không thể dịch kết quả. Giữ nguyên bản gốc."
+            : language === "en"
+              ? "Unable to translate result. Keeping original."
+              : "결과를 번역할 수 없습니다. 원본 유지."
+        );
+      } finally {
+        setIsTranslating(false);
+      }
+    };
+
+    translateResult();
+  }, [language, result, originalLanguage, isTranslating]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -161,6 +231,8 @@ export default function Diagnosis() {
       }
 
       setResult(diagnosisResult);
+      setOriginalLanguage(language); // Track the language of this result
+
 
       // Save diagnosis to database (Anonymous allowed)
       try {
