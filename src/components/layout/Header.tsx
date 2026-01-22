@@ -31,15 +31,15 @@ export default function Header() {
           <NavLink to="/community">{t("nav.community")}</NavLink>
         </nav>
 
-        <div className="hidden md:flex items-center gap-4">
+        {/* Actions Area */}
+        <div className="flex items-center gap-2 md:gap-4">
           <LanguageSwitcher />
-          {/* Auth Buttons Removed */}
-        </div>
 
-        {/* Mobile Menu Button */}
-        <button className="md:hidden p-2" onClick={toggleMenu}>
-          {isOpen ? <X /> : <Menu />}
-        </button>
+          {/* Mobile Menu Button */}
+          <button className="md:hidden p-2" onClick={toggleMenu}>
+            {isOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Nav */}
@@ -51,9 +51,6 @@ export default function Header() {
             <NavLink to="/sokfarm" onClick={() => setIsOpen(false)}>Sokfarm</NavLink>
             <NavLink to="/marketplace" onClick={() => setIsOpen(false)}>{t("nav.marketplace")}</NavLink>
             <NavLink to="/community" onClick={() => setIsOpen(false)}>{t("nav.community")}</NavLink>
-            <div className="pt-4 border-t">
-              <LanguageSwitcher />
-            </div>
           </div>
         </div>
       )}
