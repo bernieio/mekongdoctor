@@ -4,7 +4,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Droplets, Bot, Store, Heart, AlertTriangle, TrendingUp, MapPin, ThermometerSun } from "lucide-react";
+import { Droplets, Bot, Store, Heart, AlertTriangle, TrendingUp, MapPin, ThermometerSun, Palmtree } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SalinityMap } from "@/components/SalinityMap";
 import { SalinitySlider } from "@/components/SalinitySlider";
@@ -51,6 +51,12 @@ export default function Index() {
                 <Button size="lg" className="bg-secondary text-secondary-foreground border-2 border-foreground shadow-md hover:shadow-lg hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
                   <Bot className="mr-2 h-5 w-5" />
                   {t("hero.cta.diagnosis")}
+                </Button>
+              </Link>
+              <Link to="/sokfarm">
+                <Button size="lg" variant="outline" className="bg-primary-foreground/10 text-primary-foreground border-2 border-primary-foreground hover:bg-primary-foreground/20">
+                  <Palmtree className="mr-2 h-5 w-5" />
+                  {t("hero.cta.sokfarm")}
                 </Button>
               </Link>
               <Link to="/taccau">

@@ -29,6 +29,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "hero.description": "Giúp nông dân ĐBSCL ứng phó với xâm nhập mặn, kết nối chuyên gia AI, tiếp cận chính sách hỗ trợ và thương mại hóa nông sản.",
     "hero.cta.diagnosis": "Hỏi Bác sĩ AI",
     "hero.cta.taccau": "Khóm Tắc Cậu",
+    "hero.cta.sokfarm": "Mật hoa dừa Sokfarm",
 
     // Stats
     "stats.farmers": "Nông dân đang sử dụng",
@@ -239,6 +240,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "hero.description": "Helping Mekong Delta farmers cope with saline intrusion, connect with AI experts, access support policies and commercialize agricultural products.",
     "hero.cta.diagnosis": "Ask AI Doctor",
     "hero.cta.taccau": "Tac Cau Pineapple",
+    "hero.cta.sokfarm": "Sokfarm Coconut Nectar",
 
     // Stats
     "stats.farmers": "Active Farmers",
@@ -449,6 +451,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "hero.description": "메콩 삼각주 농민들이 염분 침입에 대처하고, AI 전문가와 연결하며, 지원 정책에 접근하고 농산물을 상업화할 수 있도록 돕습니다.",
     "hero.cta.diagnosis": "AI 진단 받기",
     "hero.cta.taccau": "탁카우 파인애플",
+    "hero.cta.sokfarm": "Sokfarm 코코넛 넥타",
 
     // Stats
     "stats.farmers": "활성 농민",

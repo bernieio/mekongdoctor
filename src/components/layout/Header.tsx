@@ -25,8 +25,8 @@ export default function Header() {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6">
           <NavLink to="/diagnosis">{t("nav.diagnosis")}</NavLink>
-          <NavLink to="/taccau">Khóm Tắc Cậu</NavLink>
           <NavLink to="/sokfarm">Sokfarm</NavLink>
+          <NavLink to="/taccau">Khóm Tắc Cậu</NavLink>
           <NavLink to="/marketplace">{t("nav.marketplace")}</NavLink>
           <NavLink to="/community">{t("nav.community")}</NavLink>
         </nav>
@@ -47,8 +47,8 @@ export default function Header() {
         <div className="md:hidden border-t bg-background p-4">
           <div className="flex flex-col space-y-4">
             <NavLink to="/diagnosis" onClick={() => setIsOpen(false)}>{t("nav.diagnosis")}</NavLink>
-            <NavLink to="/taccau" onClick={() => setIsOpen(false)}>Khóm Tắc Cậu</NavLink>
             <NavLink to="/sokfarm" onClick={() => setIsOpen(false)}>Sokfarm</NavLink>
+            <NavLink to="/taccau" onClick={() => setIsOpen(false)}>Khóm Tắc Cậu</NavLink>
             <NavLink to="/marketplace" onClick={() => setIsOpen(false)}>{t("nav.marketplace")}</NavLink>
             <NavLink to="/community" onClick={() => setIsOpen(false)}>{t("nav.community")}</NavLink>
           </div>
