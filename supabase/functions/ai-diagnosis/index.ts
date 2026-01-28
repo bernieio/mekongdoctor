@@ -28,6 +28,8 @@ serve(async (req) => {
 
   console.log("Request received from:", req.headers.get("origin"));
 
+  let validatedBody: any = {};
+
   try {
     const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
     if (!OPENROUTER_API_KEY) {
@@ -45,7 +47,7 @@ serve(async (req) => {
       );
     }
 
-    const validatedBody = parseResult.data;
+    validatedBody = parseResult.data;
     const { province, district, cropType, cropLabel, salinityLevel, threshold, symptoms, imageUrls, language } = validatedBody;
 
     // Sanitize symptoms to prevent prompt injection
@@ -233,7 +235,8 @@ Phân tích ngay.`;
 
     // FALLBACK LOGIC (Fail-Safe)
     // Re-calculating status for fallback response
-    const body = await req.clone().json().catch(() => ({}));
+    // Uses validatedBody if available, otherwise empty object to prevent crashes
+    const body = validatedBody || {};
     const lvl = body.salinityLevel || 0;
     const thr = body.threshold || 2;
     const crop = body.cropLabel || "Cây trồng";
