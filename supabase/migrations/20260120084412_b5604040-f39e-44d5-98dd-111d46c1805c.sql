@@ -1,5 +1,5 @@
 -- Create diagnoses table to store diagnosis history
-CREATE TABLE public.diagnoses (
+CREATE TABLE IF NOT EXISTS public.diagnoses (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
   province TEXT NOT NULL,
@@ -19,6 +19,8 @@ CREATE TABLE public.diagnoses (
 ALTER TABLE public.diagnoses ENABLE ROW LEVEL SECURITY;
 
 -- Users can view their own diagnoses
+-- Drop existing policies if they exist to avoid errors on retry
+DROP POLICY IF EXISTS "Users can view their own diagnoses" ON public.diagnoses;
 CREATE POLICY "Users can view their own diagnoses" 
 ON public.diagnoses 
 FOR SELECT 
@@ -29,6 +31,7 @@ USING (
 );
 
 -- Users can create their own diagnoses
+DROP POLICY IF EXISTS "Users can create their own diagnoses" ON public.diagnoses;
 CREATE POLICY "Users can create their own diagnoses" 
 ON public.diagnoses 
 FOR INSERT 
@@ -39,6 +42,7 @@ WITH CHECK (
 );
 
 -- Users can delete their own diagnoses
+DROP POLICY IF EXISTS "Users can delete their own diagnoses" ON public.diagnoses;
 CREATE POLICY "Users can delete their own diagnoses" 
 ON public.diagnoses 
 FOR DELETE 
@@ -49,5 +53,5 @@ USING (
 );
 
 -- Create index for faster queries
-CREATE INDEX idx_diagnoses_user_id ON public.diagnoses(user_id);
-CREATE INDEX idx_diagnoses_created_at ON public.diagnoses(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_diagnoses_user_id ON public.diagnoses(user_id);
+CREATE INDEX IF NOT EXISTS idx_diagnoses_created_at ON public.diagnoses(created_at DESC);
